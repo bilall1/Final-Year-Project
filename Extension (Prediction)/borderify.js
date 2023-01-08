@@ -18,6 +18,25 @@ var list_of_classes = ["product",
 	"description",
 	"continue"]
 
+
+	//Maintaing record for tester in Session Memory
+	let sessionMemory = sessionStorage.getItem("sessionVar");
+	let name = sessionStorage.getItem("sessionVarName");
+	let url = sessionStorage.getItem("sessionVarUrl");
+	
+	if(!sessionMemory || !name || !url || sessionMemory.toLowerCase()=="null" || name.toLowerCase() == "null" || url.toLowerCase() == "null" ){
+		sessionMemory = prompt("Server IP","xxx.xxx.xxx.xxx");
+		name = prompt("Enter Username","");
+		url = prompt("SUT URL","http://localhost/timeclock/");
+		
+		sessionStorage.setItem("sessionVar", sessionMemory);
+		sessionStorage.setItem("sessionVarName", name);
+		sessionStorage.setItem("sessionVarUrl", url);
+	}
+	else{
+			console.log("not doing");
+	}
+
 //Fetching last state from Flask Server
 $.ajax({
 	type: "GET",
