@@ -1,0 +1,186 @@
+<html><head><title>PHP Timeclock 1.04 - Create User</title>
+
+
+<link rel="stylesheet" type="text/css" media="screen" href="../css/default.css">
+<link rel="stylesheet" type="text/css" media="print" href="../css/print.css">
+<script type="text/javascript" src="../scripts/CalendarPopup.js"></script>
+<script language="javascript">document.write(getCalendarStyles());</script><style>
+.cpYearNavigation,.cpMonthNavigation { background-color:#cdc0b0; text-align:center; vertical-align:center; text-decoration:none; color:#000000; font-family:Tahoma; border-width:0px 0px 1px 0px; border-style:solid; border-color: #748771; }
+.cpDayColumnHeader, .cpYearNavigation,.cpMonthNavigation,.cpCurrentMonthDate,.cpCurrentMonthDateDisabled,.cpOtherMonthDate,.cpOtherMonthDateDisabled,.cpCurrentDate,.cpCurrentDateDisabled,.cpTodayText,.cpTodayTextDisabled,.cpText { font-family:Tahoma; font-size:11px; }
+TD.cpDayColumnHeader { text-align:right; border:solid thin #C0C0C0;border-width:0px 0px 1px 0px; }
+.cpCurrentMonthDate, .cpOtherMonthDate, .cpCurrentDate  { text-align:right; text-decoration:none; }
+.cpCurrentMonthDateDisabled, .cpOtherMonthDateDisabled, .cpCurrentDateDisabled { color:#D0D0D0; text-align:right; text-decoration:line-through; }
+.cpCurrentMonthDate, .cpCurrentDate { color:#000000; }
+.cpOtherMonthDate { color:#808080; }
+TD.cpCurrentDate { color:white; background-color: #eeeeee; border-width:1px; border:solid thin #748771; }
+TD.cpCurrentDateDisabled { border-width:1px; border:solid thin #FFAAAA; }
+TD.cpTodayText, TD.cpTodayTextDisabled { border:solid thin #C0C0C0; border-width:1px 0px 0px 0px;}
+A.cpTodayText, SPAN.cpTodayTextDisabled { height:20px; }
+A.cpTodayText { color:black; }
+.cpTodayTextDisabled { color:#D0D0D0; }
+.cpBorder { border:solid thin #748771;border-width:1px 1px 1px 1px; }
+</style>
+
+<script language="javascript" src="../scripts/pnguin.js"></script>
+<script language="JavaScript">
+
+    function office_names() {
+
+        var select = document.form.office_name;
+        select.options[0] = new Option("Choose One");
+        select.options[0].value = '';
+
+        select.options[1] = new Option("quest");
+select.options[1].value = "quest";
+    }
+
+    function group_names() {
+        var offices_select = document.form.office_name;
+        var groups_select = document.form.group_name;
+        groups_select.options[0] = new Option("Choose One");
+        groups_select.options[0].value = '';
+
+        if (offices_select.options[offices_select.selectedIndex].value != '') {
+            groups_select.length = 0;
+        }
+
+        
+        if (offices_select.options[offices_select.selectedIndex].text == "quest") {
+            groups_select.options[0] = new Option("...");
+groups_select.options[0].value = '';
+groups_select.options[1] = new Option("UAV");
+groups_select.options[1].value = "UAV";
+groups_select.options[2] = new Option("Chess");
+groups_select.options[2].value = "Chess";
+        }
+        
+        if (groups_select.options[groups_select.selectedIndex].value != '') {
+            groups_select.length = 0;
+        }
+    }
+
+</script>
+</head>
+<body onload="office_names();">
+<table class="header" width="100%" cellspacing="1" cellpadding="0" border="0">
+  <tbody><tr><td align="left"><a href="../index.php"><img src="images/logos/phptimeclock.png" border="0"></a></td>
+    <td colspan="2" scope="col" valign="middle" align="right"><a href="http://www.historychannel.com/tdih" style="color:#000000;font-family:Tahoma;font-size:10pt;
+        text-decoration:none;">March 26, 2021&nbsp;&nbsp;</a></td></tr>
+</tbody></table>
+<table class="topmain_row_color" width="100%" cellspacing="0" cellpadding="0" border="0">
+  <tbody><tr>
+    <td style="padding-left:12px;" width="10" valign="middle" align="left"><img src="../images/icons/user_orange.png" border="0"></td>
+    <td style="color:#000000;font-family:Tahoma;font-size:10pt;padding-left:8px;" valign="middle" align="left">logged in as: admin</td>
+    <td valign="middle" align="right"><img src="../images/icons/house.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../index.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+        Home&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/bricks.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../login.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+        Administration&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/report.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../reports/index.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+        Reports&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/time.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../punchclock/menu.php" style="color:#000000;font-family:Tahoma;font-size:10pt;
+        text-decoration:none;">Punchclock&nbsp;&nbsp;</a></td>
+    <td width="20" valign="middle" align="right"><img src="../images/icons/arrow_rotate_clockwise.png" border="0">&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../logout.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+        Logout&nbsp;&nbsp;</a></td></tr>
+</tbody></table>
+<table width="100%" height="89%" cellspacing="1" cellpadding="0" border="0">
+  <tbody><tr valign="top">
+    <td class="left_main" scope="col" width="180" align="left">
+      <table class="hide" width="100%" cellspacing="0" cellpadding="1" border="0">
+        <tbody><tr><td class="left_rows" height="11"></td></tr>
+        <tr><td class="left_rows_headings" valign="middle" height="18">Users</td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/user.png" alt="User Summary">&nbsp;&nbsp;
+                <a class="admin_headings" href="useradmin.php">User Summary</a></td></tr>
+        <tr><td class="current_left_rows" valign="middle" height="18" align="left"><img src="../images/icons/user_add.png" alt="Create New User">
+                &nbsp;&nbsp;<a class="admin_headings" href="usercreate.php">Create New User</a></td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/magnifier.png" alt="User Search">&nbsp;&nbsp;
+                <a class="admin_headings" href="usersearch.php">User Search</a></td></tr>
+        <tr><td class="left_rows" height="33"></td></tr>
+        <tr><td class="left_rows_headings" valign="middle" height="18">Offices</td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/brick.png" alt="Office Summary">&nbsp;&nbsp;
+                <a class="admin_headings" href="officeadmin.php">Office Summary</a></td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/brick_add.png" alt="Create New Office">&nbsp;&nbsp;
+                <a class="admin_headings" href="officecreate.php">Create New Office</a></td></tr>
+        <tr><td class="left_rows" height="33"></td></tr>
+        <tr><td class="left_rows_headings" valign="middle" height="18">Groups</td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/group.png" alt="Group Summary">&nbsp;&nbsp;
+                <a class="admin_headings" href="groupadmin.php">Group Summary</a></td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/group_add.png" alt="Create New Group">&nbsp;&nbsp;
+                <a class="admin_headings" href="groupcreate.php">Create New Group</a></td></tr>
+        <tr><td class="left_rows" height="33"></td></tr>
+        <tr><td class="left_rows_headings" colspan="2" valign="middle" height="18">In/Out Status</td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/application.png" alt="Status Summary">
+                &nbsp;&nbsp;<a class="admin_headings" href="statusadmin.php">Status Summary</a></td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/application_add.png" alt="Create Status">&nbsp;&nbsp;
+                <a class="admin_headings" href="statuscreate.php">Create Status</a></td></tr>
+        <tr><td class="left_rows" height="33"></td></tr>
+        <tr><td class="left_rows_headings" colspan="2" valign="middle" height="18">Miscellaneous</td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/clock.png" alt="Add/Edit/Delete Time">
+                &nbsp;&nbsp;<a class="admin_headings" href="timeadmin.php">Add/Edit/Delete Time</a></td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/application_edit.png" alt="Edit System Settings">
+                &nbsp;&nbsp;<a class="admin_headings" href="sysedit.php">Edit System Settings</a></td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/database_go.png" alt="Upgrade Database">&nbsp;&nbsp;&nbsp;<a class="admin_headings" href="dbupgrade.php">Upgrade Database</a></td></tr>
+      </tbody></table></td>
+    <td class="right_main" scope="col" align="left">
+      <table width="100%" height="100%" cellspacing="1" cellpadding="10" border="0">
+        <tbody><tr class="right_main_text">
+          <td valign="top">
+            <br>
+            <table class="table_border" width="60%" cellspacing="3" cellpadding="0" border="0" align="center">
+              <tbody><tr>
+                <td class="table_rows" width="20" align="center"><img src="../images/icons/cancel.png"></td><td class="table_rows_red">
+                    An Office is required.</td></tr>
+            </tbody></table>
+            <br>
+            <form name="form" action="/timeclock/admin/usercreate.php" method="post">
+            <table class="table_border" width="60%" cellspacing="0" cellpadding="3" border="0" align="center">
+              <tbody><tr>
+                <th class="rightside_heading" halign="left" colspan="3" nowrap=""><img src="../images/icons/user_add.png">&nbsp;&nbsp;&nbsp;Create User
+                </th></tr>
+              <tr><td height="15"></td></tr>
+              <tr><td class="table_rows" style="padding-left:32px;" width="20%" nowrap="" height="25">Username:</td><td colspan="2" style="color:red;font-family:Tahoma;font-size:11px;padding-left:20px;" width="80%">
+                      <input type="text" size="25" maxlength="50" name="post_username" value="admin">&nbsp;*</td></tr>
+              <tr><td class="table_rows" style="padding-left:32px;" width="20%" nowrap="" height="25">Display Name:</td><td colspan="2" style="color:red;font-family:Tahoma;font-size:11px;padding-left:20px;" width="80%">
+                      <input type="text" size="25" maxlength="50" name="display_name" value="Haven">&nbsp;*</td></tr>
+              <tr><td class="table_rows" style="padding-left:32px;" width="20%" nowrap="" height="25">Password:</td><td colspan="2" style="padding-left:20px;" width="80%"><input type="password" size="25" maxlength="25" name="password"></td></tr>
+              <tr><td class="table_rows" style="padding-left:32px;" width="20%" nowrap="" height="25">Confirm Password:</td><td colspan="2" style="padding-left:20px;" width="80%">
+                      <input type="password" size="25" maxlength="25" name="confirm_password"></td></tr>
+              <tr><td class="table_rows" style="padding-left:32px;" width="20%" nowrap="" height="25">Email Address:</td><td colspan="2" style="color:red;font-family:Tahoma;font-size:11px;padding-left:20px;" width="80%">
+                      <input type="text" size="25" maxlength="75" name="email_addy" value="Leta.Larson@yahoo.com">&nbsp;*</td></tr>
+              <tr><td class="table_rows" style="padding-left:32px;" width="20%" nowrap="" height="25">Office:</td><td colspan="2" style="color:red;font-family:Tahoma;font-size:10px;padding-left:20px;" width="80%">
+                      <select name="office_name" onchange="group_names();">
+                      <option value="">Choose One</option><option value="quest">quest</option></select>&nbsp;*</td></tr>
+              <tr><td class="table_rows" style="padding-left:32px;" width="20%" nowrap="" height="25">Group:</td><td colspan="2" style="color:red;font-family:Tahoma;font-size:10px;padding-left:20px;" width="80%">
+                      <select name="group_name" onfocus="group_names();">
+                        <option selected=""></option>
+                      </select>&nbsp;*</td></tr>
+              <tr><td class="table_rows" style="padding-left:32px;" width="20%" nowrap="" height="25">Sys Admin User?</td>
+                <td class="table_rows" style="padding-left:20px;" width="80%" align="left"><input type="radio" name="admin_perms" value="1">&nbsp;Yes
+                    <input type="radio" name="admin_perms" value="0" checked="">&nbsp;No</td></tr>
+              <tr><td class="table_rows" style="padding-left:32px;" width="20%" nowrap="" height="25">Time Admin User?</td>
+                <td class="table_rows" style="padding-left:20px;" width="80%" align="left"><input type="radio" name="time_admin_perms" value="1">&nbsp;Yes
+                    <input type="radio" name="time_admin_perms" value="0" checked="">&nbsp;No</td></tr>
+              <tr><td class="table_rows" style="padding-left:32px;" width="20%" nowrap="" height="25">Reports User?</td>
+                <td class="table_rows" style="padding-left:20px;" width="80%" align="left"><input type="radio" name="reports_perms" value="1">&nbsp;Yes
+                    <input type="radio" name="reports_perms" value="0" checked="">&nbsp;No</td></tr>
+              <tr><td class="table_rows" style="padding-left:32px;" width="20%" nowrap="" height="25">User Account Disabled?</td>
+                <td class="table_rows" style="padding-left:20px;" width="80%" align="left"><input type="radio" name="disabled" value="1">&nbsp;Yes
+                    <input type="radio" name="disabled" value="0" checked="">&nbsp;No</td></tr>
+              <tr><td class="table_rows" colspan="3" style="color:red;font-family:Tahoma;font-size:10px;" align="right">*&nbsp;required&nbsp;</td></tr>
+            </tbody></table>
+            <table width="60%" cellspacing="3" cellpadding="0" border="0" align="center">
+              <tbody><tr><td height="40">&nbsp;</td></tr>
+              <tr><td width="30"><input type="image" name="submit" value="Create User" src="../images/buttons/next_button.png" align="middle"></td><td><a href="useradmin.php"><img src="../images/buttons/cancel_button.png" border="0"></a></td></tr></tbody></table></form></td></tr>
+        <tr class="hide"><td class="misc_items" scope="row" colspan="2" valign="middle" height="4%" align="right">Powered by&nbsp;<a class="footer_links" href="http://httpd.apache.org/">Apache</a>&nbsp;±<a class="footer_links" href="http://mysql.org">&nbsp;MySql</a> 
+            ±<a class="footer_links" href="http://php.net">&nbsp;PHP</a>&nbsp;•<a class="footer_links" href="http://timeclock.sourceforge.net">&nbsp;PHP Timeclock&nbsp;1.04</a></td></tr>
+      </tbody></table>
+    </td>
+  </tr>
+</tbody></table>
+
+
+</body></html>

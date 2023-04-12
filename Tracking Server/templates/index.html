@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<!-- This code is for demonstration purposes only.  You should not hotlink to Github, Rawgit, or files from the Cytoscape.js documentation in your production apps. -->
+<html>
+<head>
+	<script>
+		const finalServerIp="";
+	</script>
+	<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+	<meta charset=utf-8 />
+
+	<meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
+	<title>Images</title>
+
+	<style>
+		body {
+		  font-family: 'Lato', sans-serif;
+		}
+
+		.overlay {
+		  height: 100%;
+		  width: 0;
+		  position: fixed;
+		  z-index: 1;
+		  top: 0;
+		  left: 0;
+		  background-color: rgb(0,0,0);
+		  background-color: rgba(0,0,0, 0.9);
+		  overflow-x: hidden;
+		  transition: 0.5s;
+		}
+
+		.overlay-content {
+		  position: relative;
+		  top: 2%;
+		  width: 100%;
+		  text-align: center;
+		  margin-top: 30px;
+		}
+
+		.overlay a {
+		  padding: 8px;
+		  text-decoration: none;
+		  font-size: 36px;
+		  color: #818181;
+		  display: block;
+		  transition: 0.3s;
+		}
+
+		.overlay a:hover, .overlay a:focus {
+		  color: #f1f1f1;
+		}
+
+		.overlay .closebtn {
+		  position: absolute;
+		  top: 20px;
+		  right: 45px;
+		  font-size: 60px;
+		}
+
+		@media screen and (max-height: 450px) {
+		  .overlay a {font-size: 20px}
+		  .overlay .closebtn {
+		  font-size: 40px;
+		  top: 15px;
+		  right: 35px;
+		  }
+		}
+		.highlight{
+			width:5px;
+		}
+		</style>
+</head>
+<body>
+
+<div id="cy"></div>
+<!-- <span style="font-size:30px;cursor:pointer;position:absolute" onclick="openNav()">&#9776; open</span> -->
+<div id="myNav" class="overlay">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+  <div class="overlay-content">
+	<div style = "float:left;width:50%;height:70%"><img id="myImg" name="" width="100%" height="100%"></div>
+	<div id = "data" style = "text-align: left;color:white;float:right; width:50%"></div>
+  </div>
+</div>
+	<script src="{{ url_for('static', filename='js/newdata.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/cytoscape.min.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/js-colormaps.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+	<script type="text/javascript" src = "{{ url_for('static', filename='js/test.js')}}")></script>
+<script>
+console.log("Called");
+
+function openNav() {
+  document.getElementById("myNav").style.width = "100%";
+}
+
+function closeNav() {
+  document.getElementById("myNav").style.width = "0%";
+}
+
+//--------------------------------------------------------------------------------------------------
+ function enforceBounds(x) {
+            if (x < 0) {
+                return 0;
+            } else if (x > 1){
+                return 1;
+            } else {
+                return x;
+            }
+        }
+function interpolateLinearly(x, values) {
+
+            // Split values into four lists
+            var x_values = [];
+            var r_values = [];
+            var g_values = [];
+            var b_values = [];
+            for (i in values) {
+                x_values.push(values[i][0]);
+                r_values.push(values[i][1][0]);
+                g_values.push(values[i][1][1]);
+                b_values.push(values[i][1][2]);
+            }
+
+            var i = 1;
+            while (x_values[i] < x) {
+                i = i+1;
+            }
+            i = i-1;
+
+            var width = Math.abs(x_values[i] - x_values[i+1]);
+            var scaling_factor = (x - x_values[i]) / width;
+
+            // Get the new color values though interpolation
+            var r = r_values[i] + scaling_factor * (r_values[i+1] - r_values[i])
+            var g = g_values[i] + scaling_factor * (g_values[i+1] - g_values[i])
+            var b = b_values[i] + scaling_factor * (b_values[i+1] - b_values[i])
+
+            return [enforceBounds(r), enforceBounds(g), enforceBounds(b)];
+
+        }
+</script>
+<!-- Load application code at the end to ensure DOM is loaded -->
+<script src="{{ url_for('static', filename='js/code.js') }}"></script>
+</body>
+</html>

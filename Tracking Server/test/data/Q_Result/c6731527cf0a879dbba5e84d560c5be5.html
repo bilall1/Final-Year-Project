@@ -1,0 +1,134 @@
+<html dir="ltr" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head></head><body><br>
+<b>Notice</b>:  Undefined index: c_reg_ot in <b>C:\xampp\htdocs\timeclock\punchclock\export.php</b> on line <b>201</b><br>
+<br>
+<b>Notice</b>:  Undefined index: c_date in <b>C:\xampp\htdocs\timeclock\punchclock\export.php</b> on line <b>203</b><br>
+<br>
+<b>Notice</b>:  Undefined index: c_employee in <b>C:\xampp\htdocs\timeclock\punchclock\export.php</b> on line <b>204</b><br>
+<br>
+<b>Notice</b>:  Undefined index: c_group in <b>C:\xampp\htdocs\timeclock\punchclock\export.php</b> on line <b>206</b><br>
+<br>
+<b>Notice</b>:  Undefined index: c_office in <b>C:\xampp\htdocs\timeclock\punchclock\export.php</b> on line <b>207</b><br>
+<!--?xml version="1.0" encoding="utf-8"?-->
+
+
+
+
+    <title>Export - PHP Timeclock 1.04</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="../css/default.css">
+    <link rel="stylesheet" type="text/css" href="css/punchclock.css">
+    <style type="text/css">
+        tr.odd {
+            background-color: #EFEFEF;
+        }
+
+        tr.even {
+            background-color: #FBFBFB;
+        }
+    </style>
+    <style type="text/css">
+@media print {
+	.page { background-color:#FFF; border:0; }
+	.topmain_row_color { display:none; }
+	.options { display:none; }
+	.buttons, .select-buttons { display:none; }
+	.misc_items { color:#222; }
+}
+</style>
+    <script type="text/javascript" src="scripts/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="scripts/resize_window.js"></script>
+    <script type="text/javascript" src="scripts/textrange.js"></script>
+<script type="text/javascript" src="scripts/sorttable.js"></script>
+<script type="text/javascript" src="scripts/dragtable.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+$(function(){
+	$('.export_items thead th').click(function(){
+		// redo alternate row shading
+		$('.export_items tbody tr').each(function(index){
+			$(this).removeClass('even odd').addClass( (index % 2 ? 'even' : 'odd') );
+		});
+	}).attr({title:"Click to sort table, drag to rearrange columns."});
+});
+//]]>
+</script>
+
+
+<div class="page" style="height: 956px;">
+
+    <table class="header" width="100%" cellspacing="1" cellpadding="0" border="0">
+  <tbody><tr><td align="left"><a href="../index.php"><img src="../images/logos/phptimeclock.png" border="0"></a></td>
+    <td colspan="2" scope="col" valign="middle" align="right"><a href="http://www.historychannel.com/tdih" style="color:#000000;font-family:Tahoma;font-size:10pt;
+            text-decoration:none;">March 26, 2021&nbsp;&nbsp;</a></td></tr>
+</tbody></table>
+<table class="topmain_row_color" width="100%" cellspacing="0" cellpadding="0" border="0">
+  <tbody><tr>
+    <td style="padding-left:12px;" width="10" valign="middle" align="left"><img src="../images/icons/user_orange.png" border="0"></td>
+    <td style="color:#000000;font-family:Tahoma;font-size:10pt;padding-left:8px;" valign="middle" align="left">logged in as: admin</td>
+    <td valign="middle" align="right"><img src="../images/icons/house.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../index.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+        Home&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/bricks.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../login.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+        Administration&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/report.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../reports/index.php" style="color:#000000;font-family:Tahoma;font-size:10pt;
+        text-decoration:none;">Reports&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/time.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../punchclock/menu.php" style="color:#000000;font-family:Tahoma;font-size:10pt;
+        text-decoration:none;">Punchclock&nbsp;&nbsp;</a></td>
+    <td width="20" valign="middle" align="right"><img src="../images/icons/arrow_rotate_clockwise.png" border="0">&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../logout.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+            Logout&nbsp;&nbsp;</a></td>
+</tr></tbody></table>
+
+        <div class="content">
+<div class="export">
+<h2>Export Hours</h2>
+<h3>Friday November 13, 2020 <small>through</small> Friday December 4, 2020</h3>
+
+<div class="options">
+<a href="javascript:;" onclick="$(this).toggleClass('open');$('#options').slideToggle()">Options</a>
+<div id="options" style="display:none">
+<form method="post" action="/timeclock/punchclock/export.php">
+<input type="hidden" name="from_date" value="11/13/2020">
+<input type="hidden" name="to_date" value="12/04/2020">
+<input type="hidden" name="user_name" value="All">
+<input type="hidden" name="group_name" value="All">
+<input type="hidden" name="office_name" value="All">
+<input type="hidden" name="redo" value="1">
+<table cellspacing="3" cellpadding="0" border="0">
+  <tbody><tr>
+    <td class="table_rows" valign="bottom" height="25">1.&nbsp;&nbsp;&nbsp;Select the table columns that are to be exported.</td>
+  </tr>
+  <tr>
+    <td class="table_rows" style="padding-left:15px;" nowrap="" align="left">
+      <label title="Column identifies hours as regular or overtime."><input type="checkbox" name="c_reg_ot" value="1" onclick="this.form.submit()" style=""> Regular/Overtime</label>
+      <label title="In/Out status or task code."><input type="checkbox" name="c_inout" value="1" onclick="this.form.submit()" checked="checked" style=""> Task/Status</label>
+      <label title="Date hours were worked."><input type="checkbox" name="c_date" value="1" onclick="this.form.submit()" style=""> Date</label>
+      <label title="Employee name or ID."><input type="checkbox" name="c_employee" value="1" onclick="this.form.submit()" style=""> Employee</label>
+      <label title="Employee name"><input type="checkbox" name="c_name" value="1" onclick="this.form.submit()" checked="checked" style=""> Name</label>
+      <label title="Employee's group."><input type="checkbox" name="c_group" value="1" onclick="this.form.submit()" style=""> Group</label>
+      <label title="Employee's office or location."><input type="checkbox" name="c_office" value="1" onclick="this.form.submit()" style=""> Office</label>
+    </td>
+  </tr>
+</tbody></table>
+</form></div>
+</div><!-- options -->
+<div class="error">
+No records were found.
+</div>
+<table class="buttons" width="100%" cellspacing="3" cellpadding="0" border="0" align="center">
+  <tbody><tr><td><a href="index.php"><img src="../images/buttons/done_button.png" border="0"></a></td></tr>
+</tbody></table>
+</div><!-- content -->
+
+<div class="footer">
+</div>
+
+</div><!-- page -->
+
+
+</div></body></html>

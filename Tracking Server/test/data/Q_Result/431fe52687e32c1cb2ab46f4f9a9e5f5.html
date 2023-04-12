@@ -1,0 +1,191 @@
+<html dir="ltr" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head></head><body><br>
+<b>Notice</b>:  Undefined variable: group in <b>C:\xampp\htdocs\timeclock\punchclock\punchclock.php</b> on line <b>66</b><br>
+<!--?xml version="1.0" encoding="utf-8"?-->
+
+
+
+
+    <title>Punchclock - quest - PHP Timeclock 1.04</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="../css/default.css">
+    <link rel="stylesheet" type="text/css" href="css/punchclock.css">
+    <style type="text/css">
+        tr.odd {
+            background-color: #EFEFEF;
+        }
+
+        tr.even {
+            background-color: #FBFBFB;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/nyroModal.css">
+<style type="text/css">
+media print {
+	.emp_list tbody { height:auto; color:#222; }
+}
+</style>
+    <script type="text/javascript" src="scripts/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="scripts/resize_window.js"></script>
+    <script type="text/javascript" src="scripts/jquery.scrollTo-1.3.3-min.js"></script>
+<script type="text/javascript" src="scripts/jquery.nyroModal-1.6.2.min.js"></script>
+<script type="text/javascript" src="scripts/punchclock.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+$(function(){
+	// Add click handlers to table rows.
+	$('.display_row').click(function(e){
+		e.preventDefault();
+		display.lock();			// prevent refresh while entry forms are open
+		keyboard.unbind_handler();	// no scrolling while entry forms are open
+		var id = this.id.replace(/^emp_/,'').replace(/_/g,' ');	// remove emp_ prefix and change _ to spaces
+		$.nyroModalManual({
+			url:'entry.ajax.php?emp='+encodeURIComponent(id),
+			minHeight:250,
+			endFillContent:function(){setTimeout(function(){ $('form input:first').focus(); },500);}
+		});
+		return false;
+	}).attr({title:'Click to punch in or punch out.'});
+
+	// Resize window, make tbody of table scrollable. Only works in FF now.
+	if ($.browser.mozilla) {
+		var orig_tbody_height = $('.emp_list tbody').height();
+
+		var page_border_width = 1;			// assume for now
+		var page_top_offset = $('.page').offset().top + page_border_width;;
+		var page_bottom_offset = page_top_offset;	// assume same as top
+
+		var tbody_top_offset = $('.emp_list tbody tr:first').offset().top;
+		var tbody_bottom_offset = $('.footer').height() + page_bottom_offset;
+
+		var resize_page = function(){
+			var compute_tbody_height = $(window).height() - tbody_top_offset - tbody_bottom_offset;
+			if (compute_tbody_height < orig_tbody_height) {
+				$('.emp_list tbody').height(compute_tbody_height);
+			} else {
+				$('.emp_list tbody').css({height:'auto'});
+			}
+		};
+		$(window).unbind('resize');
+		$(window).resize(resize_page).resize();
+
+		// Setup keyboard handler to scroll to name beginning with the key press.
+		keyboard.set_scroll_body_height(orig_tbody_height);
+		keyboard.bind_handler();
+	}
+
+	// Setup nyroModal event to unlock display so it can be synchronized after popup forms are complete.
+	$.fn.nyroModal.settings.endRemove = function() { display.unlock(); if ($.browser.mozilla) keyboard.bind_handler(); }
+
+	// Show and hide "synchronizing" message.
+	setTimeout(function(){ $('#message').css({visibility:'hidden'}); }, 1000);
+
+	display.schedule_refresh(60);
+});
+//]]>
+</script>
+
+
+<div class="page" style="height: 956px;">
+
+    <table class="header" width="100%" cellspacing="1" cellpadding="0" border="0">
+  <tbody><tr><td align="left"><a href="../index.php"><img src="../images/logos/phptimeclock.png" border="0"></a></td>
+    <td colspan="2" scope="col" valign="middle" align="right"><a href="http://www.historychannel.com/tdih" style="color:#000000;font-family:Tahoma;font-size:10pt;
+            text-decoration:none;">March 26, 2021&nbsp;&nbsp;</a></td></tr>
+</tbody></table>
+<table class="topmain_row_color" width="100%" cellspacing="0" cellpadding="0" border="0">
+  <tbody><tr>
+    <td valign="middle" align="right"><img src="../images/icons/house.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../index.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+        Home&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/bricks.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../login.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+        Administration&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/report.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../reports/index.php" style="color:#000000;font-family:Tahoma;font-size:10pt;
+        text-decoration:none;">Reports&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/time.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../punchclock/menu.php" style="color:#000000;font-family:Tahoma;font-size:10pt;
+        text-decoration:none;">Punchclock&nbsp;&nbsp;</a></td>
+</tr></tbody></table>
+
+    <select id="select_offices" onchange="location.href='?office='+encodeURIComponent(this.value)+'&amp;group='">
+<option value="">-- All Offices --</option>
+<option value="Filiberto">Filiberto</option>
+<option value="quest" selected="selected">quest</option>
+</select>
+<select id="select_groups" onchange="location.href='?office=quest&amp;group='+encodeURIComponent(this.value)">
+<option value="">-- All Groups --</option>
+<option value="Chess">Chess</option>
+<option value="UAV">UAV</option>
+</select>
+
+    <div class="content">
+<div id="message" style="visibility: hidden;">Synchronizing, Please Wait...</div>
+<div id="timeclock">3/26/2021, 7:09:07am</div>
+<script type="text/javascript">
+//<![CDATA[
+timer.start_time = timer.time = new Date('Friday March 26, 2021 07:09');	// server time
+timer.frequency = 1000;		// milliseconds
+function timer(id) {
+	var e = typeof id == 'string' ? document.getElementById(id) : id;	// id or object
+	if (! e) { return; }
+
+	var ticktock = function() {
+		timer.time.setTime(timer.time.getTime() + timer.frequency);
+		e.innerHTML = timer.time.toLocaleString().replace(/ GMT.*/,'').replace(/0(\d,)/,'$1').replace(/(\d{1,2}):(\d{2}):(\d{2})( )([AP]M)/,function(p0,p1,p2,p3,p4,p5) { return p1+':'+p2+':'+p3+p5.toLowerCase(); });
+		setTimeout(arguments.callee,timer.frequency);
+	};
+
+	ticktock();		// start ticking
+}
+timer('timeclock');
+//]]>
+</script>
+<table class="misc_items emp_list" width="100%" cellspacing="0" cellpadding="2" border="0">
+  <thead>
+  <tr>
+    <th width="20%" align="left">Name</th>
+    <th width="7%" align="left">In/Out</th>
+    <th width="5%" align="center">Time</th>
+    <th width="5%" align="center">Date</th>
+    <th align="left">Notes</th>
+  </tr>
+  </thead>
+  <tbody style="height: auto;">
+  <tr class="display_row odd" id="emp_salmansherin" title="Click to punch in or punch out.">
+    <td align="left"><a href="entry.php?emp=salmansherin" style="">salmansherin</a></td>
+    <td style="color:" align="left"></td>
+    <td align="right"></td>
+    <td align="right"></td>
+    <td align="left"></td>
+  </tr>
+  </tbody>
+</table>
+</div><!-- content -->
+
+<div class="footer">
+</div>
+
+</div><!-- page -->
+
+
+<div id="nyroModalFull" style="z-index: 100; position: fixed; top: 0px; left: 0px; width: 100%; height: 100%;"><div id="nyroModalBg" style="background-color: rgb(0, 0, 0); position: absolute; overflow: hidden; top: 0px; left: 0px; height: 100%; width: 100%; opacity: 0.75;"></div><div id="nyroModalWrapper" style="position: absolute; top: 50%; left: 50%; display: block; width: 687px; height: 260px; margin-top: -134px; margin-left: -347.5px; opacity: 1;"><div class="wrapper" style="width: 687px; height: 260px;"><a href="#" class="nyroModalClose" id="closeBut" title="close">Close</a><div id="nyroModalContent" style="width: 677px; height: 250px;">
+<div id="password_change_form">
+<form action="entry.ajax.php" method="get" class="nyroModal">
+<table class="table_border" width="100%" cellspacing="0" cellpadding="3" border="0" align="center">
+  <tbody><tr><th class="rightside_heading" colspan="3" nowrap="" align="left"><img src="../images/icons/lock_edit.png">&nbsp;&nbsp;&nbsp;Forgot your password?</th></tr>
+  <tr><td colspan="3" height="15">&nbsp;</td></tr>
+  <tr><th colspan="3" style="padding-left:32px;" align="left">salmansherin</th></tr>
+  <tr><td colspan="3" height="15">&nbsp;</td></tr>
+  <tr><td align="left"><p>It is not possible to lookup your old password. You will have to see a supervisor and have them change your password in the administration pages.</p></td></tr>
+  <tr><td colspan="3" height="15">&nbsp;</td></tr>
+</tbody></table>
+<table class="buttons" width="100%" cellspacing="3" cellpadding="0" border="0" align="center">
+  <tbody><tr><td><a href="javascript:history.back();" class="nyroModalClose"><img src="../images/buttons/done_button.png" border="0"></a></td></tr>
+</tbody></table>
+<input type="hidden" name="empfullname" value="salmansherin">
+</form>
+</div>
+</div></div></div><div id="nyrModalTmp" style="display: none;"></div><div id="nyroModalLoading" style="position: absolute; top: 50%; left: 50%; margin-top: -134px; margin-left: -347.5px; display: block; width: 687px; height: 260px; opacity: 0.0581172;"></div></div></body></html>

@@ -1,0 +1,155 @@
+<html><head>
+<link rel="stylesheet" type="text/css" media="screen" href="../css/default.css">
+<link rel="stylesheet" type="text/css" media="print" href="../css/print.css">
+<script language="javascript" src="../scripts/pnguin.js"></script>
+</head>
+<body>
+<table class="header" width="100%" cellspacing="1" cellpadding="0" border="0">
+  <tbody><tr><td align="left"><a href="../index.php"><img src="images/logos/phptimeclock.png" border="0"></a></td>
+    <td colspan="2" scope="col" valign="middle" align="right"><a href="http://www.historychannel.com/tdih" style="color:#000000;font-family:Tahoma;font-size:10pt;
+        text-decoration:none;">March 26, 2021&nbsp;&nbsp;</a></td></tr>
+</tbody></table>
+<table class="topmain_row_color" width="100%" cellspacing="0" cellpadding="0" border="0">
+  <tbody><tr>
+    <td style="padding-left:12px;" width="10" valign="middle" align="left"><img src="../images/icons/user_orange.png" border="0"></td>
+    <td style="color:#000000;font-family:Tahoma;font-size:10pt;padding-left:8px;" valign="middle" align="left">logged in as: admin</td>
+    <td valign="middle" align="right"><img src="../images/icons/house.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../index.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+        Home&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/bricks.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../login.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+        Administration&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/report.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../reports/index.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+        Reports&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/time.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../punchclock/menu.php" style="color:#000000;font-family:Tahoma;font-size:10pt;
+        text-decoration:none;">Punchclock&nbsp;&nbsp;</a></td>
+    <td width="20" valign="middle" align="right"><img src="../images/icons/arrow_rotate_clockwise.png" border="0">&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../logout.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+        Logout&nbsp;&nbsp;</a></td></tr>
+</tbody></table>
+<title>PHP Timeclock 1.04 - User Summary</title>
+<table width="100%" height="89%" cellspacing="1" cellpadding="0" border="0">
+  <tbody><tr valign="top">
+    <td class="left_main" scope="col" width="180" align="left">
+      <table class="hide" width="100%" cellspacing="0" cellpadding="1" border="0">
+        <tbody><tr><td class="left_rows" height="11"></td></tr>
+        <tr><td class="left_rows_headings" valign="middle" height="18">Users</td></tr>
+        <tr><td class="current_left_rows" valign="middle" height="18" align="left"><img src="../images/icons/user.png" alt="User Summary">&nbsp;&nbsp;
+                <a class="admin_headings" href="useradmin.php">User Summary</a></td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/user_add.png" alt="Create New User">&nbsp;&nbsp;
+                <a class="admin_headings" href="usercreate.php">Create New User</a></td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/magnifier.png" alt="User Search">&nbsp;&nbsp;
+                <a class="admin_headings" href="usersearch.php">User Search</a></td></tr>
+        <tr><td class="left_rows" height="33"></td></tr>
+        <tr><td class="left_rows_headings" valign="middle" height="18">Offices</td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/brick.png" alt="Office Summary">&nbsp;&nbsp;
+                <a class="admin_headings" href="officeadmin.php">Office Summary</a></td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/brick_add.png" alt="Create New Office">&nbsp;&nbsp;
+                <a class="admin_headings" href="officecreate.php">Create New Office</a></td></tr>
+        <tr><td class="left_rows" height="33"></td></tr>
+        <tr><td class="left_rows_headings" valign="middle" height="18">Groups</td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/group.png" alt="Group Summary">&nbsp;&nbsp;
+                <a class="admin_headings" href="groupadmin.php">Group Summary</a></td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/group_add.png" alt="Create New Group">&nbsp;&nbsp;
+                <a class="admin_headings" href="groupcreate.php">Create New Group</a></td></tr>
+        <tr><td class="left_rows" height="33"></td></tr>
+        <tr><td class="left_rows_headings" colspan="2" valign="middle" height="18">In/Out Status</td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/application.png" alt="Status Summary">
+                &nbsp;&nbsp;<a class="admin_headings" href="statusadmin.php">Status Summary</a></td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/application_add.png" alt="Create Status">&nbsp;&nbsp;
+                <a class="admin_headings" href="statuscreate.php">Create Status</a></td></tr>
+        <tr><td class="left_rows" height="33"></td></tr>
+        <tr><td class="left_rows_headings" colspan="2" valign="middle" height="18">Miscellaneous</td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/clock.png" alt="Add/Edit/Delete Time">
+                &nbsp;&nbsp;<a class="admin_headings" href="timeadmin.php">Add/Edit/Delete Time</a></td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/application_edit.png" alt="Edit System Settings">
+                &nbsp;&nbsp;<a class="admin_headings" href="sysedit.php">Edit System Settings</a></td></tr>
+        <tr><td class="left_rows" valign="middle" height="18" align="left"><img src="../images/icons/database_go.png" alt="Upgrade Database">&nbsp;&nbsp;&nbsp;<a class="admin_headings" href="dbupgrade.php">Upgrade Database</a></td></tr>
+      </tbody></table></td>
+    <td class="right_main" scope="col" align="left">
+      <table width="100%" height="100%" cellspacing="1" cellpadding="10" border="0">
+        <tbody><tr class="right_main_text">
+          <td valign="top">
+            <table width="90%" height="40" cellspacing="0" cellpadding="0" border="0" align="center">
+              <tbody><tr><th class="table_heading_no_color" halign="left" width="100%" nowrap="">User Summary</th></tr>
+              <tr><td class="table_rows" halign="left" nowrap="" height="40"><img src="../images/icons/user_green.png">&nbsp;&nbsp;Total 
+                      Users: 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="../images/icons/user_orange.png">&nbsp;&nbsp;
+                      Sys Admin Users: 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="../images/icons/user_red.png">&nbsp;&nbsp;
+                      Time Admin Users: 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="../images/icons/user_suit.png">&nbsp;
+                      &nbsp;Reports Users: 2</td></tr>
+            </tbody></table>
+            <table class="table_border" width="90%" cellspacing="0" cellpadding="0" border="0" align="center">
+              <tbody><tr>
+                <th class="table_heading" width="3%" nowrap="" align="left">&nbsp;</th>
+                <th class="table_heading" width="13%" nowrap="" align="left">Username</th>
+                <th class="table_heading" width="18%" nowrap="" align="left">Display Name</th>
+                <th class="table_heading" width="10%" nowrap="" align="left">Office</th>
+                <th class="table_heading" width="10%" nowrap="" align="left">Group</th>
+                <th class="table_heading" width="3%" align="center">Disabled</th>
+                <th class="table_heading" width="3%" align="center">Sys Admin</th>
+                <th class="table_heading" width="3%" align="center">Time Admin</th>
+                <th class="table_heading" width="3%" nowrap="" align="center">Reports</th>
+                <th class="table_heading" width="3%" nowrap="" align="center">Edit</th>
+                <th class="table_heading" width="3%" align="center">Chg Pwd</th>
+                <th class="table_heading" width="3%" nowrap="" align="center">Delete</th>
+              </tr>
+              <tr class="table_border" bgcolor="#FBFBFB"><td class="table_rows" width="3%" nowrap="">&nbsp;1</td>
+                <td class="table_rows" width="13%" nowrap="">&nbsp;<a title="Edit User: admin" class="footer_links" href="useredit.php?username=admin&amp;officename=">admin</a></td>
+                <td class="table_rows" width="18%" nowrap="">&nbsp;administrator</td>
+
+<td class="table_rows" width="10%" nowrap="">&nbsp;</td>
+
+<td class="table_rows" width="10%" nowrap="">&nbsp;</td>
+
+<td class="table_rows" width="3%" align="center"></td>
+
+<td class="table_rows" width="3%" align="center"><img src="../images/icons/accept.png"></td>
+
+<td class="table_rows" width="3%" align="center"><img src="../images/icons/accept.png"></td>
+
+<td class="table_rows" width="3%" align="center"><img src="../images/icons/accept.png"></td>
+
+<td class="table_rows" width="3%" align="center"><a title="Edit User: admin" href="useredit.php?username=admin&amp;officename=">
+    <img src="../images/icons/application_edit.png" border="0"></a></td>
+
+<td class="table_rows" width="3%" align="center"><a title="Change Password: admin" href="chngpasswd.php?username=admin&amp;officename="><img src="../images/icons/lock_edit.png" border="0"></a>
+</td>
+
+<td class="table_rows" width="3%" align="center"><a title="Delete User: admin" href="userdelete.php?username=admin&amp;officename=">
+    <img src="../images/icons/delete.png" border="0"></a></td></tr>
+              <tr class="table_border" bgcolor="#EFEFEF"><td class="table_rows" width="3%" nowrap="">&nbsp;2</td>
+                <td class="table_rows" width="13%" nowrap="">&nbsp;<a title="Edit User: salmansherin" class="footer_links" href="useredit.php?username=salmansherin&amp;officename=quest">salmansherin</a></td>
+                <td class="table_rows" width="18%" nowrap="">&nbsp;salman</td>
+
+<td class="table_rows" width="10%" nowrap="">&nbsp;quest</td>
+
+<td class="table_rows" width="10%" nowrap="">&nbsp;UAV</td>
+
+<td class="table_rows" width="3%" align="center"></td>
+
+<td class="table_rows" width="3%" align="center"><img src="../images/icons/accept.png"></td>
+
+<td class="table_rows" width="3%" align="center"><img src="../images/icons/accept.png"></td>
+
+<td class="table_rows" width="3%" align="center"><img src="../images/icons/accept.png"></td>
+
+<td class="table_rows" width="3%" align="center"><a title="Edit User: salmansherin" href="useredit.php?username=salmansherin&amp;officename=quest">
+    <img src="../images/icons/application_edit.png" border="0"></a></td>
+
+<td class="table_rows" width="3%" align="center"><a title="Change Password: salmansherin" href="chngpasswd.php?username=salmansherin&amp;officename=quest"><img src="../images/icons/lock_edit.png" border="0"></a>
+</td>
+
+<td class="table_rows" width="3%" align="center"><a title="Delete User: salmansherin" href="userdelete.php?username=salmansherin&amp;officename=quest">
+    <img src="../images/icons/delete.png" border="0"></a></td></tr>
+          </tbody></table></td></tr>
+        <tr class="hide"><td class="misc_items" scope="row" colspan="2" valign="middle" height="4%" align="right">Powered by&nbsp;<a class="footer_links" href="http://httpd.apache.org/">Apache</a>&nbsp;±<a class="footer_links" href="http://mysql.org">&nbsp;MySql</a> 
+            ±<a class="footer_links" href="http://php.net">&nbsp;PHP</a>&nbsp;•<a class="footer_links" href="http://timeclock.sourceforge.net">&nbsp;PHP Timeclock&nbsp;1.04</a></td></tr>
+      </tbody></table>
+    </td>
+  </tr>
+</tbody></table>
+
+
+</body></html>

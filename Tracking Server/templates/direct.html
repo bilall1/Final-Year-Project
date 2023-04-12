@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<head>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" />
+</head>
+<style>
+    .box {
+        float: left;
+        height: 20px;
+        width: 20px;
+        margin-bottom: 15px;
+        border: 1px solid black;
+        clear: both;
+    }
+    /* change css */
+    .link {
+        fill: none;
+        stroke: #666;
+        stroke-width: 1.5px;
+    }
+
+    #licensing {
+        fill: green;
+    }
+
+    .link.licensing {
+        stroke: green;
+    }
+
+    .link.resolved {
+        fill: none;
+        stroke: #666;
+        stroke-width: 1.5px;
+    }
+
+    circle {
+        fill: rgba(0, 0, 0, 0);
+        stroke: rgba(0, 0, 0, 1);
+        stroke-width: 1.5px;
+    }
+
+    text {
+        font: 12px sans-serif;
+        pointer-events: none;
+        text-shadow: 0 2px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+    }
+
+    /* here */
+
+    .svg-container {
+        display: inline-block;
+        position: relative;
+        width: 100%;
+        padding-bottom: 100%; /* aspect ratio */
+        vertical-align: top;
+        overflow: hidden;
+    }
+    .svg-content-responsive {
+        display: inline-block;
+        position: absolute;
+        top: 10px;
+        left: 0;
+    }
+
+    svg .rect {
+        fill: gold;
+        stroke: steelblue;
+        stroke-width: 5px;
+    }
+
+    /* overlay */
+
+    body {
+        font-family: "Lato", sans-serif;
+    }
+
+    .overlay {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.9);
+        overflow-x: hidden;
+        transition: 0.5s;
+    }
+
+    .overlay-content {
+        position: relative;
+        top: 2%;
+        width: 100%;
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .overlay a {
+        padding: 8px;
+        text-decoration: none;
+        font-size: 36px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+    }
+
+    .overlay a:hover,
+    .overlay a:focus {
+        color: #f1f1f1;
+    }
+
+    .overlay .closebtn {
+        position: absolute;
+        /* top: 20px; */
+        right: 45px;
+        font-size: 60px;
+    }
+
+    @media screen and (max-height: 450px) {
+        .overlay a {
+            font-size: 20px;
+        }
+        .overlay .closebtn {
+            font-size: 40px;
+            top: 15px;
+            right: 35px;
+        }
+    }
+    .highlight {
+        width: 5px;
+    }
+</style>
+<body>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="{{ url_for('static', filename='js/newdata.js') }}"></script>
+    <!-- <script src="{{ url_for('static', filename='js/cytoscape.min.js') }}"></script> -->
+    <script
+        type="text/javascript"
+        src="{{ url_for('static', filename='js/js-colormaps.js') }}"
+    ></script>
+    <script
+        type="text/javascript"
+        src="{{ url_for('static', filename='js/jquery.js') }}"
+    ></script>
+    <script
+        type="text/javascript"
+        src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"
+    ></script>
+
+    <script>
+        var array_of_errors = [];
+        let currentUser = "";
+        //populating links:
+        let links = [];
+        let removedNodes = [];
+        let removedLinks = [];
+        let prevInteractions = [];
+        let visibleNodes = [];
+        let visibleLinks = [];
+        let shownOnce = false;
+        let currentState = "placeholder";
+        let rootState = "";
+        const ss = ["licensing", "resolved"];
+        //userData:
+        var hiddenAll = false;
+        userData = [];
+        actions = [];
+        // let nameCounter = 0
+        // let thisName = "Action"+nameCounter
+
+        // function popUlateUsers
+        let rootSrc = "";
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].start == 1) {
+                rootSrc = data[i].src;
+            }
+        }
+
+        // sad loop :(
+        actionCount = 1;
+        for (let i = 0; i < data.length; i++) {
+            let random = Math.floor(Math.random() * ss.length);
+            //nameCounter = nameCounter+1;
+
+            if (data[i].start == 1) {
+                // thisName = "Root"
+                data[i].edges.forEach(function (edge) {
+                    //  console.log("from: "+data[i].src+" to: "+egde.state)
+                    // if(data[i].src != egde.state){
+                    //
+                    // }
+                    links.push({
+                        source: data[i].src,
+                        target: edge.state,
+                        type: ss[random],
+                        actualName: "Root",
+                        action: edge.action,
+                    });
+                });
+            } else {
+                data[i].edges.forEach(function (edge) {
+                    links.push({
+                        source: data[i].src,
+                        target: edge.state,
+                        type: ss[random],
+                        actualName: "",
+                        action: edge.action,
+                    });
+                });
+            }
+        }
+
+        var nodes = {};
+
+        // Compute the distinct nodes from the links.
+        links.forEach(function (link) {
+            if (link.actualName != "") {
+                link.source =
+                    nodes[link.source] ||
+                    (nodes[link.source] = {
+                        name: link.source,
+                        actualName: "Root",
+                    });
+                link.target =
+                    nodes[link.target] ||
+                    (nodes[link.target] = { name: link.target });
+            } else {
+                link.source =
+                    nodes[link.source] ||
+                    (nodes[link.source] = { name: link.source });
+                link.target =
+                    nodes[link.target] ||
+                    (nodes[link.target] = { name: link.target });
+            }
+        });
+
+        let hiddenNodes = [];
+        let hiddenLinks = [];
+
+        let thisData = "";
+
+        let thisNodes = {};
+        let images = [];
+        Object.entries(nodes).forEach((node) => {
+            jQuery.ajax({
+                url: "/get_image?name=" + node[1].name + ".png",
+                success: function (result) {
+                    node[1].img = result.data;
+                },
+                async: false,
+            });
+        });
+        let new_arr = [];
+
+        doneBefore = [];
+        links.forEach((link) => {
+            link.stCombo = link.source.name + "::" + link.target.name;
+
+            doneBefore.push(link.stCombo);
+        });
+
+        doneBefore = [...new Set(doneBefore)];
+        const ids = links.map((o) => o.stCombo);
+        const filtered = links.filter(
+            ({ stCombo }, index) => !ids.includes(stCombo, index + 1)
+        );
+        links = filtered;
+
+        let width = 1920;
+        let height = 1920;
+
+        var svg = d3
+            .select("body")
+            .append("div")
+            .classed("svg-container", true)
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        function linkArc(dede) {
+            // dede value
+            var dx = dede.target.x - dede.source.x,
+                dy = dede.target.y - dede.source.y,
+                dr = Math.sqrt(dx * dx + dy * dy);
+            return (
+                "M" +
+                dede.source.x +
+                "," +
+                dede.source.y +
+                "A" +
+                dr +
+                "," +
+                dr +
+                " 0 0,1 " +
+                dede.target.x +
+                "," +
+                dede.target.y
+            );
+        }
+
+        var force;
+        var path;
+        var text;
+        var circle;
+        var image;
+        var remText;
+        function newUpdateCode() {
+            path = svg.select("g").selectAll("path").data(links);
+
+            path.enter()
+                .append("path")
+                .attr("class", function (d) {
+                    return "link " + d.type;
+                })
+                .attr("marker-end", function (d) {
+                    return "url(#" + d.type + ")";
+                })
+                .attr("id", function (d) {
+                    return d.source.name + "::" + d.target.name;
+                })
+                .attr("style", "display:block");
+
+            path.exit().remove();
+
+            force.links(links);
+            path.attr("d", linkArc);
+            force.start();
+        }
+        function transform(d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        }
+        function drawNewNode(state) {
+            console.log("Draw Node");
+            d3.select(".svg-container").remove();
+            const myNav = document.querySelector("#myNav");
+            svg = d3
+                .select("body")
+                .insert("div", "#myNav")
+                .append("div")
+                .classed("svg-container", true)
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            updateCode(1);
+            force.start();
+            if (hiddenAll) {
+                hideAll();
+            }
+            currentCount = 1;
+            // currentState = "placeholder";
+            console.log("Prev Interactions : ", prevInteractions);
+            prevInteractions.forEach(function (interaction) {
+                findAndUpdate(
+                    interaction.color,
+                    interaction.state,
+                    interaction.action
+                );
+            });
+        }
+
+        function updateCode(cc) {
+            newNodes = {};
+
+            force = d3.layout
+                .force()
+                .nodes(d3.values(nodes))
+                .links(links)
+
+                .size([width, height])
+                .linkDistance(function (d) {
+                    if (d.actualName == "Root") {
+                        rootState = d.source.name;
+                        return 500;
+                    }
+                    return 300;
+                })
+                .charge(-1300)
+                .on("tick", tick)
+                .start();
+
+            svg.append("defs")
+                .selectAll("marker")
+                .data(["suit", "licensing", "resolved"])
+                .enter()
+                .append("marker")
+                .attr("id", function (d) {
+                    console.log("data marker: ", d);
+                    return d;
+                })
+                .attr("viewBox", "0 -4 10 10")
+                .attr("refX", 30)
+                .attr("refY", -2.0)
+                .attr("markerWidth", 8)
+                .attr("markerHeight", 8)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("style", "display:block")
+                .attr("d", "M0,-5L10,0L0,5");
+
+            path = svg
+                .append("g")
+                .selectAll("path")
+                .data(force.links())
+                .enter()
+                .append("path")
+                .attr("class", function (d) {
+                    return "link " + d.type;
+                })
+                .attr("marker-end", function (d) {
+                    return "url(#" + d.type + ")";
+                })
+                .attr("id", function (d) {
+                    return d.source.name + "::" + d.target.name;
+                })
+                .attr("style", "display:block");
+
+            var circleEnter = svg
+                .selectAll(".node")
+                .data(force.nodes())
+                .enter()
+                .append("g")
+                .call(force.drag);
+            image = circleEnter
+                .append("image")
+                .attr("xlink:href", function (d) {
+                    return "data:image/png;base64," + d.img;
+                })
+                .attr("x", "-20px")
+                .attr("y", "-20px")
+                .attr("width", "40px")
+                .attr("height", "40px")
+                .attr("id", function (d) {
+                    return d.name;
+                });
+
+            circle = circleEnter
+                .append("circle")
+                .attr("r", 25)
+                .attr("id", function (d) {
+                    return d.name;
+                })
+                .on("click", (d) => {
+                    //Cntrl+click for collapse
+                    if (d3.event.ctrlKey || d3.event.metaKey) {
+                        if (!d3.event.defaultPrevented) {
+                            hideNode(d.name);
+                        }
+                    }
+                    //Else only click to show info
+                    else if (d3.event.shiftKey) {
+                        document.getElementById("myImg").src =
+                            "data:image/png;base64," + d.img;
+                        document.getElementById("myNav").style.width = "100%";
+                        let thisHtml = "";
+                        jQuery.ajax({
+                            url: "/get_File?name=" + d.name + ".html",
+                            success: function (result) {
+                                thisHtml = result.data;
+                            },
+                            async: false,
+                        });
+                        document.getElementById("data").innerHTML =
+                            safe_tags(thisHtml);
+                    }
+                });
+            remText = svg.append("g").selectAll("text").remove();
+
+            text = svg
+                .append("g")
+                .selectAll("text")
+                .data(force.nodes())
+                .enter()
+                .append("text")
+                .attr("x", -15)
+                .attr("y", ".31em")
+                .text(function (d) {
+                    if (d.actualName == "Root") {
+                        return d.actualName + cc;
+                    } else {
+                        return "";
+                    }
+                });
+
+            function tick() {
+                path.attr("d", linkArc);
+                circle.attr("transform", transform);
+                text.attr("transform", transform);
+                image.attr("transform", transform);
+            }
+        }
+
+        function linkArc(dede) {
+            // dede value
+            var dx = dede.target.x - dede.source.x,
+                dy = dede.target.y - dede.source.y,
+                dr = Math.sqrt(dx * dx + dy * dy);
+            return (
+                "M" +
+                dede.source.x +
+                "," +
+                dede.source.y +
+                "A" +
+                dr +
+                "," +
+                dr +
+                " 0 0,1 " +
+                dede.target.x +
+                "," +
+                dede.target.y
+            );
+        }
+
+        //Hide links
+        function hideLink(source, target) {
+            let elem = document.getElementById(source + "::" + target);
+            elem.style.display = "none";
+        }
+        yayCounter = 0;
+        yayNode = 0;
+        function hideNode(id) {
+            var elems = document.querySelectorAll("[id='" + id + "']");
+            elems.forEach((elem) => {
+                elem.style.display = "none";
+                yayNode++;
+            });
+
+            links.forEach((link) => {
+                // console.log(JSON.stringify(link.source.name))
+                if (link.source.name == id || link.target.name == id) {
+                    hideLink2(link.source.name + "::" + link.target.name);
+                    // console.log("YAY")
+                    yayCounter++;
+                } else {
+                    // console.log("NAY "+id, " src: "+link.source.name," target: "+link.target.name)
+                    doo = "nothing";
+                }
+            });
+        }
+
+        function transform(d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        }
+
+        let cc = 1;
+
+        let previousCount = 0;
+        let currentCount = 0;
+
+        function createNewNode(source, target, action) {
+            // Compute the distinct nodes from the links.
+
+            nodes[target] = { name: target };
+            var imag = "";
+
+            jQuery.ajax({
+                url: "/get_image?name=" + target + ".png",
+                success: function (result) {
+                    imag = result.data;
+                },
+                async: false,
+            });
+            nodes[target] = { name: target, img: imag };
+        }
+
+        function findAndUpdate(color, state, action) {
+            var updateParameters = {
+                color: color,
+                state: state,
+                action: action,
+            };
+            if (
+                !prevInteractions.some(
+                    (item) =>
+                        JSON.stringify(item) ===
+                        JSON.stringify(updateParameters)
+                )
+            ) {
+                prevInteractions.push(updateParameters);
+            }
+            firstTime = false;
+
+            //------------------------------
+
+            let linkId = "";
+
+            if (currentState == "placeholder") {
+                currentState = state;
+                linkId = state + ":" + rootState;
+                let strokeWidth = "1.5";
+
+                showNode(state);
+                visibleNodes.push(state);
+                currentCount += 1;
+                let nodeElems = document.querySelectorAll(
+                    "[id='" + state + "']"
+                );
+                if (nodeElems.length < 1) {
+                    // create image and html
+                    var isComeplete = "no";
+                    jQuery.ajax({
+                        url: "/createImgHtml?stateName=" + state,
+                        success: function (result) {
+                            isComeplete = result.completed;
+                        },
+                        async: false,
+                    });
+                    // create node
+                    createNewNode(currentState, state, action);
+
+                    if (isComeplete == "yes") {
+                        console.log("State : ", state);
+                        drawNewNode(state);
+                    }
+
+                    nodeElems = document.querySelectorAll(
+                        "[id='" + state + "']"
+                    );
+                }
+                nodeElems.forEach((elem) => {
+                    if (elem.style.cssText.includes("stroke")) {
+                        elem.style.stroke = color;
+                    } else {
+                        elem.style.cssText =
+                            "display: block; stroke:" +
+                            color +
+                            ";stroke-width:" +
+                            strokeWidth;
+                    }
+                });
+
+                let nodeFound = false;
+                visibleNodes.forEach((node) => {
+                    if (node.state == state) {
+                        node.css = nodeCss;
+                        nodeFound = true;
+                    }
+                });
+
+                if (!nodeFound) {
+                    visibleNodes.push({
+                        state: state,
+                        css:
+                            "display: block; stroke:" +
+                            color +
+                            ";stroke-width:" +
+                            strokeWidth,
+                    });
+                }
+            } else if (currentCount > 0) {
+                //Save visible nodes and links for refresh;
+                let linkId = currentState + "::" + state;
+                let strokeWidth = "1.5";
+                let nodeCss =
+                    "display: block; stroke:" +
+                    color +
+                    ";stroke-width:" +
+                    strokeWidth;
+                let linkCss =
+                    "display: block; stroke:" +
+                    color +
+                    ";stroke-width:" +
+                    strokeWidth;
+
+                let nodeElems = document.querySelectorAll(
+                    "[id='" + state + "']"
+                );
+
+                if (nodeElems.length < 1) {
+                    // create image and html
+                    var isComeplete = "no";
+                    jQuery.ajax({
+                        url: "/createImgHtml?stateName=" + state,
+                        success: function (result) {
+                            isComeplete = result.completed;
+                        },
+                        async: false,
+                    });
+                    // create node
+                    createNewNode(currentState, state, action);
+
+                    if (isComeplete == "yes") {
+                        console.log("State : ", state);
+                        drawNewNode(state);
+                    }
+
+                    nodeElems = document.querySelectorAll(
+                        "[id='" + state + "']"
+                    );
+                }
+                showNode(state);
+                nodeElems.forEach((elem) => {
+                    //console.log("Debug for hide show, elem count: ",linkElems.length," ",elem.style.stroke)
+
+                    strokeWidth = "1.5";
+                    if (elem.style.cssText.includes("stroke")) {
+                        // console.log(":))))",elem.style.stroke)
+                        elem.style.stroke = color;
+                        //elem.style.setAttribute("stroke-width","1.5")
+                    } else {
+                        elem.style.cssText = nodeCss;
+                    }
+
+                    // elem.setAttribute("marker-end", "url(" + color+ ")")
+                });
+                // return;
+                showLink(currentState, state, action);
+
+                var linkElems = document.querySelectorAll(
+                    "[id='" + linkId + "']"
+                );
+                linkElems.forEach((elem) => {
+                    if (elem.style.cssText.includes("stroke")) {
+                        // console.log(":))))", elem.style.stroke);
+                        elem.style.stroke = color;
+                        //elem.style.setAttribute("stroke-width","1.5")
+                    } else {
+                        elem.style.cssText = linkCss;
+                    }
+                    //console.log("Debug for hide show, elem count: ",linkElems.length," ",elem.style.stroke)
+
+                    // elem.setAttribute("marker-end", "url(" + color+ ")")
+                });
+
+                let linkFound = false;
+                let nodeFound = false;
+
+                visibleNodes.forEach((node) => {
+                    if (node.state == state) {
+                        node.css = nodeCss;
+                        nodeFound = true;
+                    }
+                });
+                visibleLinks.forEach((link) => {
+                    if (link.link == linkId) {
+                        link.css = linkCss;
+                        linkFound = true;
+                    }
+                });
+                if (!nodeFound) {
+                    visibleNodes.push({ state: state, css: nodeCss });
+                }
+                if (!linkFound) {
+                    visibleLinks.push({ link: linkId, css: linkCss });
+                }
+
+                //showOne(currentState,currentState,state);
+                linkId = currentState + ":" + state;
+                currentState = state;
+                //console.log(linkId)
+                currentCount += 1;
+            }
+
+            // console.log("Visible nodes: ",visibleNodes);
+            // console.log("Visible Links: ",visibleLinks);
+            //Object should post here
+        }
+
+        function callGetInteraction() {
+            jQuery.ajax({
+                url: "/getInteraction",
+                success: function (result) {
+                    //console.log("Interaction: ",result);
+                    if (result == "1") {
+                    } else {
+                        array_of_errors = result;
+                    }
+                },
+            });
+
+            Object.entries(nodes).forEach((node) => {
+                for (let j = 0; j < array_of_errors.length; j++) {
+                    if (node[1].name == array_of_errors[j].state) {
+                        if (
+                            node[1].actualName == "Root" ||
+                            node[1].actualName == "Root/Bug"
+                        )
+                            node[1].actualName = "Root/Bug";
+                        else node[1].actualName = "Bug";
+                    }
+                }
+            });
+
+            force.nodes(d3.values(nodes));
+
+            remText = svg.selectAll("text").remove();
+            text = svg
+                .append("g")
+                .selectAll("text")
+                .data(force.nodes())
+                .enter()
+                .append("text")
+                .attr("x", -15)
+                .attr("y", ".31em")
+                .text(function (d) {
+                    if (d.actualName == "Bug") {
+                        return "BUG";
+                    } else if (d.actualName == "Root") {
+                        return "Root";
+                    } else if (d.actualName == "Root/Bug") {
+                        return "Root/Bug";
+                    } else {
+                        return "";
+                    }
+                });
+
+            // text.attr("transform", transform);
+            force.start();
+        }
+
+        let errorNumber = 0;
+        function callfunction() {
+            let errorBody = document.getElementById("errorBody");
+            let errortr = document.createElement("tr");
+            let tderror = document.createElement("td");
+            let tddesc = document.createElement("td");
+
+            tderror.innerHTML = array_of_error_details[errorNumber][0];
+            tddesc.innerHTML = array_of_error_details[errorNumber][1];
+
+            errortr.appendChild(tderror).setAttribute("class", "tderror");
+            errortr.appendChild(tddesc).setAttribute("class", "tddesc");
+            errorBody.appendChild(errortr);
+            errorNumber = errorNumber + 1;
+        }
+
+        array_of_error_details = [];
+        function callgetErrorDetails() {
+            jQuery.ajax({
+                url: "/getErrorDetails",
+                success: function (result) {
+                    if (result == "1") {
+                    } else {
+                        // var resultLength = JSON.stringify(result).length;
+
+                        let ok = false;
+                        if (array_of_error_details.length < result.length) {
+                            console.log(
+                                array_of_error_details.length,
+                                result.length
+                            );
+                            ok = true;
+                        }
+                        //console.log("Array of error details: ",array_of_error_details);
+                        array_of_error_details = result;
+                        if (ok != false) {
+                            console.log("Function calling");
+                            callfunction();
+                            ok = false;
+                        }
+                    }
+                },
+            });
+        }
+
+        //Code for getting interction ended
+        let userPresent = false; //Used for error display
+        let trError;
+
+        let firstTime = false;
+        function callGetData() {
+            jQuery.ajax({
+                url: "/getdata",
+                success: function (result) {
+                    let arr = result;
+
+                    if (arr && arr.id !== "ack") {
+                        if (firstTime) {
+                            arr = arr.data;
+                            let check = false;
+
+                            //console.log(arr.length)
+                            currentCount = arr.length - 1;
+                            // console.log(arr)
+                            for (let i = 0; i < arr.length; i++)
+                                findAndUpdate(
+                                    arr[arr.length - 1].color,
+                                    arr[arr.length - 1].state,
+                                    arr[arr.length - 1].action
+                                );
+
+                            userBody = document.getElementById("usersBody");
+                            tds = userBody.getElementsByClassName("userName");
+                            coltrs = document.getElementsByClassName("box");
+
+                            for (let tr of coltrs) {
+                                //console.log(tr)
+                                if (
+                                    tr.getAttribute("class") ==
+                                    "box " + arr[arr.length - 1].id
+                                ) {
+                                    tr.setAttribute(
+                                        "style",
+                                        "background-color:" +
+                                            arr[arr.length - 1].color
+                                    );
+                                }
+                            }
+
+                            //console.log(tds)
+                            for (let td of tds) {
+                                if (td.innerHTML == arr[arr.length - 1].id) {
+                                    check = true;
+                                    countElement =
+                                        td.getElementsByClassName("count");
+                                    // console.log(countElement," @@@@ count element")
+                                    countElement.innerHTML = arr[0].userClicks;
+
+                                    // colorElement = td.getElementsByClassName("box")[0]
+                                    // colorElement.setAttribute("style","background-color:"+arr[arr.length-1].color);
+                                }
+                            }
+                            if (!check) {
+                                let tr = document.createElement("tr");
+                                let tdColor = document.createElement("td");
+                                let tdName = document.createElement("td");
+                                let tdExplored = document.createElement("td");
+                                let tdBugs = document.createElement("td");
+
+                                tdName.innerHTML = arr[arr.length - 1].id;
+
+                                tdExplored.innerHTML =
+                                    arr[arr.length - 1].userClicks;
+                                tdBugs.innerHTML = "3";
+                                tr.appendChild(tdName).setAttribute(
+                                    "class",
+                                    "userName"
+                                );
+                                let colorBox = tr
+                                    .appendChild(tdColor)
+                                    .setAttribute(
+                                        "class",
+                                        "box " + arr[arr.length - 1].id
+                                    );
+                                //
+
+                                tr.appendChild(tdExplored).setAttribute(
+                                    "class",
+                                    "count"
+                                );
+                                tr.appendChild(tdBugs);
+                                userBody.appendChild(tr); // Create a <li> node
+                                // Append <li> to <ul> with id="myList"
+                            }
+                        } //if
+                        //here
+                        else {
+                            arr = arr.data;
+                            let check = false;
+
+                            //console.log(arr.length)
+                            currentCount = arr.length - 1;
+                            // console.log(arr)
+                            findAndUpdate(
+                                arr[arr.length - 1].color,
+                                arr[arr.length - 1].state,
+                                arr[arr.length - 1].action
+                            );
+                            // console.log(arr[arr.length-1].action)
+                            userBody = document.getElementById("usersBody");
+                            tds = userBody.getElementsByClassName("userName");
+                            coltrs = document.getElementsByClassName("box");
+
+                            for (let tr of coltrs) {
+                                //console.log(tr)
+                                if (
+                                    tr.getAttribute("class") ==
+                                    "box " + arr[arr.length - 1].id
+                                ) {
+                                    tr.setAttribute(
+                                        "style",
+                                        "background-color:" +
+                                            arr[arr.length - 1].color
+                                    );
+                                }
+                            }
+
+                            //console.log(tds)
+                            for (let td of tds) {
+                                if (td.innerHTML == arr[arr.length - 1].id) {
+                                    check = true;
+                                    countElement =
+                                        td.getElementsByClassName("count");
+                                    countElement.innerHTML =
+                                        arr[arr.length - 1].userClicks;
+                                }
+                            }
+
+                            if (!check) {
+                                let tr = document.createElement("tr");
+                                let tdColor = document.createElement("td");
+                                let tdName = document.createElement("td");
+                                let tdExplored = document.createElement("td");
+                                let tdBugs = document.createElement("td");
+
+                                let tdBugsAll = document.createElement("td");
+                                let tdExploredAll =
+                                    document.createElement("td");
+                                let tdNodesAll = document.createElement("td");
+
+                                trError = document.createElement("tr");
+                                trExp = document.createElement("tr");
+                                trAll = document.createElement("tr");
+
+                                tdName.innerHTML = arr[arr.length - 1].id;
+
+                                tdExplored.innerHTML =
+                                    arr[arr.length - 1].userClicks;
+
+                                tdBugsAll.innerHTML =
+                                    "Total Bugs: " + array_of_errors.length;
+                                tdExploredAll.innerHTML =
+                                    "Explored Nodes: " + visibleNodes.length;
+                                tdNodesAll.innerHTML =
+                                    "Total Nodes: " + Object.keys(nodes).length;
+
+                                tr.appendChild(tdName).setAttribute(
+                                    "class",
+                                    "userName"
+                                );
+                                let colorBox = tr
+                                    .appendChild(tdColor)
+                                    .setAttribute(
+                                        "class",
+                                        "box " + arr[arr.length - 1].id
+                                    );
+                                //
+
+                                tr.appendChild(tdExplored).setAttribute(
+                                    "class",
+                                    "count" + arr[arr.length - 1].id
+                                );
+                                tr.appendChild(tdBugs).setAttribute(
+                                    "class",
+                                    "bugs" + arr[arr.length - 1].id
+                                );
+
+                                if (userPresent == false) {
+                                    userBody.appendChild(tr);
+                                    trError
+                                        .appendChild(tdBugsAll)
+                                        .setAttribute("class", "bug");
+                                    trExp
+                                        .appendChild(tdExploredAll)
+                                        .setAttribute("class", "exp");
+                                    trAll
+                                        .appendChild(tdNodesAll)
+                                        .setAttribute("class", "all");
+                                    userBody.appendChild(trError);
+                                    userBody.appendChild(trExp);
+                                    userBody.appendChild(trAll);
+                                    userPresent = true;
+                                } else {
+                                    var delElement =
+                                        document.querySelector(".bug");
+                                    delElement.remove();
+
+                                    var delElement1 =
+                                        document.querySelector(".exp");
+                                    delElement1.remove();
+
+                                    var delElement2 =
+                                        document.querySelector(".all");
+                                    delElement2.remove();
+
+                                    userBody.appendChild(tr);
+
+                                    trError
+                                        .appendChild(tdBugsAll)
+                                        .setAttribute("class", "bug");
+                                    trExp
+                                        .appendChild(tdExploredAll)
+                                        .setAttribute("class", "exp");
+                                    trAll
+                                        .appendChild(tdNodesAll)
+                                        .setAttribute("class", "all");
+                                    userBody.appendChild(trError);
+                                    userBody.appendChild(trExp);
+                                    userBody.appendChild(trAll);
+                                }
+                            } else {
+                                var uCLicks = arr[arr.length - 1].userClicks;
+                                var uId = arr[arr.length - 1].id;
+                                var delElement = document.querySelector(
+                                    ".count" + uId
+                                );
+                                delElement.remove();
+
+                                let tdExplored = document.createElement("td");
+
+                                tdExplored.innerHTML = uCLicks;
+                                tdExplored.setAttribute("class", "count" + uId);
+
+                                let tdBugs = document.querySelector(
+                                    ".bugs" + uId
+                                );
+                                tdBugs.parentNode.insertBefore(
+                                    tdExplored,
+                                    tdBugs
+                                );
+
+                                //Updates if user is already present
+                                userBody.getElementsByClassName(
+                                    "bug"
+                                )[0].innerHTML =
+                                    "Total Bugs: " + array_of_errors.length;
+                                userBody.getElementsByClassName(
+                                    "exp"
+                                )[0].innerHTML =
+                                    "Explored Nodes: " + visibleNodes.length;
+                                userBody.getElementsByClassName(
+                                    "all"
+                                )[0].innerHTML =
+                                    "Total Nodes: " + Object.keys(nodes).length;
+                            }
+                        }
+
+                        //findAndUpdate(arr);
+                        //to here
+                    }
+                    // callGetData();
+                },
+                error: function (xhr, status) {
+                    //   callGetData()
+                },
+                //        async: false
+            });
+        }
+        setInterval(function () {
+            //setTimeout(function(){
+            callGetData();
+            callGetInteraction();
+            callgetErrorDetails();
+        }, 500);
+
+        // currentUser = showLoginAlert();
+        updateCode(cc);
+
+        function showOne(nodeId, source, target) {
+            if (target != "------") {
+                //update link:
+                //console.log(source," ",target)
+                let elem = document.getElementById(source + "::" + target);
+                if (elem) {
+                    elem.setAttribute("style", "display:block");
+                }
+            } else {
+                //console.log("in else")
+            }
+            //update node:
+            var elems = document.querySelectorAll("[id='" + nodeId + "']");
+            //console.log(nodeId);
+            count = 0;
+            //console.log("hehee")
+            elems.forEach((elem) => {
+                elem.style.display = "block";
+                count = count + 1;
+            });
+        }
+
+        function showNode(id) {
+            var elems = document.querySelectorAll("[id='" + id + "']");
+            count = 0;
+            elems.forEach((elem) => {
+                elem.style.display = "block";
+                count = count + 1;
+            });
+
+            // console.log("Node and item count:", count);
+        }
+        function showLink(source, target, action) {
+            try {
+                let elem = document.getElementById(source + "::" + target);
+
+                elem.setAttribute("style", "display:block");
+            } catch (e) {
+                // added missing  here
+
+                console.log("ERROR ", source + "::" + target);
+                let random = Math.floor(Math.random() * ss.length);
+                let tempSource;
+                let tempTarget;
+                for (let i = 0; i < links.length; i++) {
+                    if (links[i].source.name == source) {
+                        tempSource = links[i].source;
+                        break;
+                    } else if (links[i].target.name == source) {
+                        tempSource = links[i].target;
+                        break;
+                    }
+                }
+                for (let i = 0; i < links.length; i++) {
+                    if (links[i].source.name == target) {
+                        tempTarget = links[i].source;
+                        break;
+                    } else if (links[i].target.name == target) {
+                        tempTarget = links[i].target;
+                        break;
+                    }
+                }
+                if (!tempSource) {
+                    tempSource = nodes[source];
+                }
+                if (!tempTarget) {
+                    tempTarget = nodes[target];
+                }
+                if (tempSource && tempTarget) {
+                    links.push({
+                        source: tempSource,
+                        stCombo: tempSource.name + "::" + tempTarget.name,
+                        target: tempTarget,
+                        type: ss[random],
+                        actualName: "",
+                        action: action,
+                    });
+                }
+
+                const ids1 = links.map((o) => o.stCombo);
+                const filtered1 = links.filter(
+                    ({ stCombo }, index) => !ids1.includes(stCombo, index + 1)
+                );
+                links = filtered1;
+
+                newUpdateCode();
+
+                let elem = document.getElementById(source + "::" + target);
+                if (elem != null) {
+                    elem.setAttribute("style", "display:block");
+                } else {
+                    console.log("Element not created");
+                }
+            }
+        }
+
+        //this is the one to use:
+
+        function hideLink2(id) {
+            // console.log(id)
+            let elem = document.getElementById(id);
+            // console.log(elem)
+            // elem.hidden() //= true;
+            // console.log(elem)
+            elem.setAttribute("style", "display:none");
+        }
+
+        function hideAll() {
+            linkCounter = 0;
+            hiddenAll = true;
+
+            let paths = document.getElementsByTagName("path");
+            for (let i = 0; i < paths.length; i++) {
+                try {
+                    //console.log("Tried")
+                    hideLink2(paths[i].id);
+                    //console.log(paths[i]);
+                } catch {
+                    console.log("error here");
+                }
+            }
+
+            nodecounter = 0;
+            Object.entries(nodes).forEach((node) => {
+                nodecounter++;
+
+                hideNode(node[0]);
+            });
+
+            hideButton = document.getElementById("showHideButton");
+            hideButton.innerHTML = "Show All";
+
+            hideButton.setAttribute("onClick", "javascript: showAll();");
+        }
+
+        function showAll() {
+            hiddenAll = false;
+            links.forEach((link) => {
+                linkCounter++;
+                // hideLink("34bd6461aba44cf9ddd269ccd82b6309","431fe52687e32c1cb2ab46f4f9a9e5f5")
+                action = "None";
+                showLink(link.source.name, link.target.name, action);
+                try {
+                    showLink(link.target.name, link.source.name, action);
+                } catch {
+                    console.log("not found");
+                }
+                // hideNode()
+            });
+
+            Object.entries(nodes).forEach((node) => {
+                showNode(node[0]);
+                //console.log(node[0])
+            });
+            hideButton = document.getElementById("showHideButton");
+            hideButton.innerHTML = "Hide All";
+            hideButton.setAttribute("onClick", "javascript: hideAll();");
+        }
+
+        function safe_tags(str) {
+            let ret = str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;<br/>");
+
+            return ret;
+        }
+
+        function openNav() {
+            document.getElementById("myNav").style.width = "100%";
+        }
+
+        function closeNav() {
+            document.getElementById("myNav").style.width = "0%";
+        }
+
+        // function showLoginAlert(){
+        //   let user="";
+        //   while(user == ""){
+        //     tempUser  = window.prompt("sometext","defaultText");
+        //     user = tempUser.trim();
+        //   }
+        //   return user
+        // }
+        //
+        //--------------------------------------------------------------------------------------------------
+        // Add hide nodes
+
+        function enforceBounds(x) {
+            if (x < 0) {
+                return 0;
+            } else if (x > 1) {
+                return 1;
+            } else {
+                return x;
+            }
+        }
+        function interpolateLinearly(x, values) {
+            // Split values into four lists
+            var x_values = [];
+            var r_values = [];
+            var g_values = [];
+            var b_values = [];
+
+            for (i in values) {
+                x_values.push(values[i][0]);
+                r_values.push(values[i][1][0]);
+                g_values.push(values[i][1][1]);
+                b_values.push(values[i][1][2]);
+            }
+
+            var i = 1;
+            while (x_values[i] < x) {
+                i = i + 1;
+            }
+            i = i - 1;
+
+            var width = Math.abs(x_values[i] - x_values[i + 1]);
+            var scaling_factor = (x - x_values[i]) / width;
+
+            // Get the new color values though interpolation
+            var r =
+                r_values[i] + scaling_factor * (r_values[i + 1] - r_values[i]);
+            var g =
+                g_values[i] + scaling_factor * (g_values[i + 1] - g_values[i]);
+            var b =
+                b_values[i] + scaling_factor * (b_values[i + 1] - b_values[i]);
+
+            return [enforceBounds(r), enforceBounds(g), enforceBounds(b)];
+        }
+    </script>
+    <div id="myNav" class="overlay">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"
+            >&times;</a
+        >
+        <div class="overlay-content">
+            <div style="float: left; width: 50%; height: 70%">
+                <img id="myImg" name="" width="100%" height="100%" />
+            </div>
+            <div
+                id="data"
+                style="text-align: left; color: white; float: right; width: 50%"
+            ></div>
+        </div>
+    </div>
+
+    <!-- Div for modal -->
+    <div class="container" style="position: absolute; top: 1%">
+        <!-- Trigger the modal with a button -->
+        <button
+            type="button"
+            class="btn btn-info btn-default"
+            data-toggle="modal"
+            data-target="#myModal"
+        >
+            Open Summary
+        </button>
+        <button
+            type="button"
+            class="btn btn-info btn-default"
+            id="showHideButton"
+            onclick="hideAll()"
+        >
+            Hide All nodes
+        </button>
+        <button
+            type="button"
+            class="btn btn-info btn-default"
+            data-toggle="modal"
+            data-target="#myModal1"
+        >
+            Errors
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <!-- <button type="button" class="close" data-dismiss="modal" >&times;</button> -->
+                        <!-- <h4 class="modal-title">Bug info</h4> -->
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Color</th>
+                                    <th scope="col">Click Count</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersBody">
+                                <!-- <tr>
+                <th scope="row">User1</th>
+                <td>Zeeshan</td>
+                <td>14</td>
+                <td>22</td>
+              </tr>
+              <tr>
+                <th scope="row">User2</th>
+                <td>Salman</td>
+                <td>3</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <th scope="row">User3</th>
+                <td>Sammi</td>
+                <td>20</td>
+                <td>34</td>
+              </tr> -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-default"
+                            data-dismiss="modal"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error -->
+        <div class="modal fade" id="myModal1" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header"></div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Error</th>
+                                    <th scope="col">Error Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id="errorBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-default"
+                            data-dismiss="modal"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

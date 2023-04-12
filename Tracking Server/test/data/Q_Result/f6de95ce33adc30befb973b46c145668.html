@@ -1,0 +1,89 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" dir="ltr" lang="en"><head>
+    <title>Login - PHP Timeclock 1.04</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="../css/default.css">
+    <link rel="stylesheet" type="text/css" href="css/punchclock.css">
+    <style type="text/css">
+        tr.odd {
+            background-color: #EFEFEF;
+        }
+
+        tr.even {
+            background-color: #FBFBFB;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" media="screen" href="css/jquery.suggest.css">
+    <script type="text/javascript" src="scripts/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="scripts/resize_window.js"></script>
+    <script type="text/javascript" src="scripts/jquery.suggest.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+$(function(){
+	$('#emp').suggest('suggest.ajax.php');
+	$('form input:first').focus();
+});
+//]]>
+</script>
+</head>
+<body>
+<div class="page" style="height: 956px;">
+
+    <table class="header" width="100%" cellspacing="1" cellpadding="0" border="0">
+  <tbody><tr><td align="left"><a href="../index.php"><img src="../images/logos/phptimeclock.png" border="0"></a></td>
+    <td colspan="2" scope="col" valign="middle" align="right"><a href="http://www.historychannel.com/tdih" style="color:#000000;font-family:Tahoma;font-size:10pt;
+            text-decoration:none;">March 26, 2021&nbsp;&nbsp;</a></td></tr>
+</tbody></table>
+<table class="topmain_row_color" width="100%" cellspacing="0" cellpadding="0" border="0">
+  <tbody><tr>
+    <td style="padding-left:12px;" width="10" valign="middle" align="left"><img src="../images/icons/user_orange.png" border="0"></td>
+    <td style="color:#000000;font-family:Tahoma;font-size:10pt;padding-left:8px;" valign="middle" align="left">logged in as: admin</td>
+    <td valign="middle" align="right"><img src="../images/icons/house.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../index.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+        Home&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/bricks.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../login.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+        Administration&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/report.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../reports/index.php" style="color:#000000;font-family:Tahoma;font-size:10pt;
+        text-decoration:none;">Reports&nbsp;&nbsp;</a></td>
+    <td width="23" valign="middle" align="right"><img src="../images/icons/time.png" border="0">&nbsp;&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../punchclock/menu.php" style="color:#000000;font-family:Tahoma;font-size:10pt;
+        text-decoration:none;">Punchclock&nbsp;&nbsp;</a></td>
+    <td width="20" valign="middle" align="right"><img src="../images/icons/arrow_rotate_clockwise.png" border="0">&nbsp;</td>
+    <td width="10" valign="middle" align="right"><a href="../logout.php" style="color:#000000;font-family:Tahoma;font-size:10pt;text-decoration:none;">
+            Logout&nbsp;&nbsp;</a></td>
+</tr></tbody></table>
+
+        <div class="content">
+
+<div id="employee_entry_form">
+<form action="/timeclock/punchclock/login.php" method="get">
+<table class="table_border" width="100%" cellspacing="0" cellpadding="3" border="0" align="center">
+  <tbody><tr>
+	<th class="rightside_heading" colspan="3" nowrap="" align="left"><img src="../images/icons/clock_add.png">&nbsp;&nbsp;&nbsp;Enter your name
+	</th>
+  </tr>
+  <tr><td colspan="3" height="15"></td></tr>
+  <tr><td class="table_rows" style="padding-left:32px;" width="20%" nowrap="" height="25">Employee Name:</td>
+      <td colspan="2" style="color:red;font-family:Tahoma;font-size:10px;" width="80%">
+	  <input type="text" size="25" maxlength="50" name="emp" id="emp" value="" autocomplete="off">&nbsp;*</td></tr>
+  <tr><td colspan="3" height="15">&nbsp;</td></tr>
+  <tr><td class="table_rows" colspan="3" style="color:red;font-family:Tahoma;font-size:10px;" align="right">*&nbsp;required&nbsp;</td></tr>
+</tbody></table>
+<table class="buttons" width="100%" cellspacing="3" cellpadding="0" border="0" align="center">
+  <tbody><tr><td width="30"><input type="image" name="submit" value="Next" src="../images/buttons/next_button.png" align="middle"></td>
+      <td><a href="index.php"><img src="../images/buttons/cancel_button.png" border="0"></a></td></tr>
+</tbody></table>
+</form>
+</div>
+</div><!-- content -->
+
+<div class="footer">
+</div>
+
+</div><!-- page -->
+
+
+<ul class="ac_results" style="top: 182px; left: 231.633px;"></ul></body></html>
