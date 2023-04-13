@@ -24,4 +24,4 @@ To send errors to the graph page open the "Bug Reporting" folder and on the CMD 
 This will lead to the error sending page. Fill the form to send error to the server and the graph will update the state on which the error is found by showing "Bug" text on the state.
 On the graph page there is the button that shows the stats and the errors found during the testing.
 The stats button will show the the active users and their number of clicks and explored and total nodes of the graph.
-The error button will show the bugs found and their details.
+The error button will show the bugs found and their details
