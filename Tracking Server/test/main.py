@@ -24,7 +24,7 @@ colors = defaultdict(defaultcolor)
 
 IP = socket.gethostbyname(socket.getfqdn())
 regex = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
-
+# finding the user action performed
 def get_Action(x,attr):
     s = x + "!@!"
     if x == 'input':
@@ -61,7 +61,7 @@ def get_Action(x,attr):
         s += 'nan'  # href
     return s
 
-
+# applying the reverse enngineering action
 def reverseEngineerAction(action):
     tag, name, value, href = action.split('!@!')
     xpath = '//' + tag + '['
@@ -99,7 +99,7 @@ def reverseEngineerAction(action):
         pathlist.append(XPATH)
     return pathlist
 
-
+# getting state data and adding user colors + state hash
 @app.route('/data',methods=["GET","POST"])
 def dataReciever():
     #global tag, html, state
@@ -122,6 +122,7 @@ def dataReciever():
     print("reveived")
     return "ok"
 
+# Function to get interaction and pre-processing it to make it distinct
 @app.route('/getdata',methods=["GET","POST"])
 def dataSender():
 
@@ -155,7 +156,7 @@ def dataSender():
 @app.route('/test',methods=["GET","POST"])
 def hello_name():
    return "what"
-
+# Draw basic graph with static data
 @app.route('/',methods=["GET","POST"])
 def show_graph():
     """
@@ -174,27 +175,8 @@ def show_graph():
     """
     return render_template("index.html")
 
-# @app.route('/graph')
-# def send():
-#     return "<a href={0}>file</a>".format("{{ url_for('static', filename='js/graph.json') }}")
-# @app.route('/d3',methods=["GET","POST"])
-# def show_graphd3():
-#     """
-#     with open("./templates/index.html","r") as file:
-#         s = file.read()
-#         s = s.replace('const finalServerIp="";','const finalServerIp="'+IP+'";')
-#     with open("./templates/index.html","w") as file:
-#         file.write(s)
-#
-#     with open("./templates/index.html", "r") as file:
-#         s = file.read()
-#         s = re.sub(regex, IP, s)
-#
-#     with open("./templates/index.html","w") as file:
-#         file.write(s)
-#     """
-#     return render_template("d3test.html")
 
+# Getting images from files and responding to requests
 @app.route('/get_image')
 def get_image():
     filename = request.args.get('name')
@@ -203,6 +185,7 @@ def get_image():
     #return send_file("./data/Q_Result/"+filename, mimetype='image/png')
     return jsonify({"data":encoded_string.decode("utf-8")})
 
+# Getting Source code from Files
 @app.route('/get_File')
 def get_file():
     filename = request.args.get('name')
