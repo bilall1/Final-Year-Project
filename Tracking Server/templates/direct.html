@@ -165,30 +165,23 @@
         var hiddenAll = false;
         userData = [];
         actions = [];
-        // let nameCounter = 0
-        // let thisName = "Action"+nameCounter
-
-        // function popUlateUsers
+        // populate data
         let rootSrc = "";
         for (let i = 0; i < data.length; i++) {
             if (data[i].start == 1) {
                 rootSrc = data[i].src;
             }
         }
-
-        // sad loop :(
+        
+        // Populating edges in links
         actionCount = 1;
         for (let i = 0; i < data.length; i++) {
             let random = Math.floor(Math.random() * ss.length);
             //nameCounter = nameCounter+1;
 
+            
             if (data[i].start == 1) {
-                // thisName = "Root"
                 data[i].edges.forEach(function (edge) {
-                    //  console.log("from: "+data[i].src+" to: "+egde.state)
-                    // if(data[i].src != egde.state){
-                    //
-                    // }
                     links.push({
                         source: data[i].src,
                         target: edge.state,
@@ -241,6 +234,7 @@
 
         let thisNodes = {};
         let images = [];
+        // adding images to each node
         Object.entries(nodes).forEach((node) => {
             jQuery.ajax({
                 url: "/get_image?name=" + node[1].name + ".png",
@@ -251,7 +245,7 @@
             });
         });
         let new_arr = [];
-
+        // setting stCombo from Source to destination
         doneBefore = [];
         links.forEach((link) => {
             link.stCombo = link.source.name + "::" + link.target.name;
@@ -261,6 +255,7 @@
 
         doneBefore = [...new Set(doneBefore)];
         const ids = links.map((o) => o.stCombo);
+        // Filtering not selected edges
         const filtered = links.filter(
             ({ stCombo }, index) => !ids.includes(stCombo, index + 1)
         );
@@ -268,7 +263,7 @@
 
         let width = 1920;
         let height = 1920;
-
+        // Defining d3 layout
         var svg = d3
             .select("body")
             .append("div")
@@ -277,6 +272,7 @@
             .attr("width", width)
             .attr("height", height);
 
+        // Function to calculate linkArc for each edge on node movement
         function linkArc(dede) {
             // dede value
             var dx = dede.target.x - dede.source.x,
@@ -304,6 +300,7 @@
         var circle;
         var image;
         var remText;
+        // Redrawing the graph after adding additional node
         function newUpdateCode() {
             path = svg.select("g").selectAll("path").data(links);
 
@@ -326,9 +323,11 @@
             path.attr("d", linkArc);
             force.start();
         }
+        // Calculating node position
         function transform(d) {
             return "translate(" + d.x + "," + d.y + ")";
         }
+        // Drawing new Node when found
         function drawNewNode(state) {
             console.log("Draw Node");
             d3.select(".svg-container").remove();
@@ -358,10 +357,10 @@
                 );
             });
         }
-
+        // Updating the graph with initial data
         function updateCode(cc) {
             newNodes = {};
-
+            // Drawing nodes and edges with required parameters
             force = d3.layout
                 .force()
                 .nodes(d3.values(nodes))
@@ -378,7 +377,7 @@
                 .charge(-1300)
                 .on("tick", tick)
                 .start();
-
+            // Adding defs components for nodes
             svg.append("defs")
                 .selectAll("marker")
                 .data(["suit", "licensing", "resolved"])
@@ -397,7 +396,7 @@
                 .append("path")
                 .attr("style", "display:block")
                 .attr("d", "M0,-5L10,0L0,5");
-
+            // Adding g tags for each node and adding ids to each node
             path = svg
                 .append("g")
                 .selectAll("path")
@@ -414,7 +413,7 @@
                     return d.source.name + "::" + d.target.name;
                 })
                 .attr("style", "display:block");
-
+            // Using circle to contain image of the node
             var circleEnter = svg
                 .selectAll(".node")
                 .data(force.nodes())
@@ -433,7 +432,8 @@
                 .attr("id", function (d) {
                     return d.name;
                 });
-
+            
+            // Attaching image to node and adding clicks functionality
             circle = circleEnter
                 .append("circle")
                 .attr("r", 25)
@@ -464,8 +464,9 @@
                             safe_tags(thisHtml);
                     }
                 });
+            // Remove all text on nodes
             remText = svg.append("g").selectAll("text").remove();
-
+            // Add text on nodes like "Root"
             text = svg
                 .append("g")
                 .selectAll("text")
@@ -481,7 +482,7 @@
                         return "";
                     }
                 });
-
+            // Applying transformation on elements
             function tick() {
                 path.attr("d", linkArc);
                 circle.attr("transform", transform);
@@ -489,7 +490,7 @@
                 image.attr("transform", transform);
             }
         }
-
+        // Function to calculate linkArc for each edge
         function linkArc(dede) {
             // dede value
             var dx = dede.target.x - dede.source.x,
@@ -518,6 +519,7 @@
         }
         yayCounter = 0;
         yayNode = 0;
+        // Hide Single node
         function hideNode(id) {
             var elems = document.querySelectorAll("[id='" + id + "']");
             elems.forEach((elem) => {
@@ -529,10 +531,8 @@
                 // console.log(JSON.stringify(link.source.name))
                 if (link.source.name == id || link.target.name == id) {
                     hideLink2(link.source.name + "::" + link.target.name);
-                    // console.log("YAY")
                     yayCounter++;
                 } else {
-                    // console.log("NAY "+id, " src: "+link.source.name," target: "+link.target.name)
                     doo = "nothing";
                 }
             });
@@ -546,7 +546,7 @@
 
         let previousCount = 0;
         let currentCount = 0;
-
+        // Creating and adding new node when found
         function createNewNode(source, target, action) {
             // Compute the distinct nodes from the links.
 
@@ -562,13 +562,14 @@
             });
             nodes[target] = { name: target, img: imag };
         }
-
+        // Update graph when traversing
         function findAndUpdate(color, state, action) {
             var updateParameters = {
                 color: color,
                 state: state,
                 action: action,
             };
+            // Saving interactions for redrawing
             if (
                 !prevInteractions.some(
                     (item) =>
@@ -583,7 +584,7 @@
             //------------------------------
 
             let linkId = "";
-
+            // When current node is root node
             if (currentState == "placeholder") {
                 currentState = state;
                 linkId = state + ":" + rootState;
@@ -595,6 +596,7 @@
                 let nodeElems = document.querySelectorAll(
                     "[id='" + state + "']"
                 );
+                // When node is not present
                 if (nodeElems.length < 1) {
                     // create image and html
                     var isComeplete = "no";
@@ -607,7 +609,7 @@
                     });
                     // create node
                     createNewNode(currentState, state, action);
-
+                    // Add node to graph
                     if (isComeplete == "yes") {
                         console.log("State : ", state);
                         drawNewNode(state);
@@ -617,6 +619,7 @@
                         "[id='" + state + "']"
                     );
                 }
+                // Change colors of nodes
                 nodeElems.forEach((elem) => {
                     if (elem.style.cssText.includes("stroke")) {
                         elem.style.stroke = color;
@@ -648,6 +651,7 @@
                     });
                 }
             } else if (currentCount > 0) {
+                // When current node is not root
                 //Save visible nodes and links for refresh;
                 let linkId = currentState + "::" + state;
                 let strokeWidth = "1.5";
@@ -665,7 +669,7 @@
                 let nodeElems = document.querySelectorAll(
                     "[id='" + state + "']"
                 );
-
+                // When node is not present
                 if (nodeElems.length < 1) {
                     // create image and html
                     var isComeplete = "no";
@@ -678,7 +682,7 @@
                     });
                     // create node
                     createNewNode(currentState, state, action);
-
+                    // Draw node
                     if (isComeplete == "yes") {
                         console.log("State : ", state);
                         drawNewNode(state);
@@ -688,6 +692,7 @@
                         "[id='" + state + "']"
                     );
                 }
+                // Update the colors of nodes
                 showNode(state);
                 nodeElems.forEach((elem) => {
                     //console.log("Debug for hide show, elem count: ",linkElems.length," ",elem.style.stroke)
@@ -701,9 +706,9 @@
                         elem.style.cssText = nodeCss;
                     }
 
-                    // elem.setAttribute("marker-end", "url(" + color+ ")")
                 });
-                // return;
+                // Update edges traversed
+
                 showLink(currentState, state, action);
 
                 var linkElems = document.querySelectorAll(
@@ -711,15 +716,10 @@
                 );
                 linkElems.forEach((elem) => {
                     if (elem.style.cssText.includes("stroke")) {
-                        // console.log(":))))", elem.style.stroke);
                         elem.style.stroke = color;
-                        //elem.style.setAttribute("stroke-width","1.5")
                     } else {
                         elem.style.cssText = linkCss;
                     }
-                    //console.log("Debug for hide show, elem count: ",linkElems.length," ",elem.style.stroke)
-
-                    // elem.setAttribute("marker-end", "url(" + color+ ")")
                 });
 
                 let linkFound = false;
@@ -751,11 +751,9 @@
                 currentCount += 1;
             }
 
-            // console.log("Visible nodes: ",visibleNodes);
-            // console.log("Visible Links: ",visibleLinks);
             //Object should post here
         }
-
+        // Function to get user interaction
         function callGetInteraction() {
             jQuery.ajax({
                 url: "/getInteraction",
@@ -767,7 +765,8 @@
                     }
                 },
             });
-
+            // Check if node is root
+            // Also check if bug exist on node
             Object.entries(nodes).forEach((node) => {
                 for (let j = 0; j < array_of_errors.length; j++) {
                     if (node[1].name == array_of_errors[j].state) {
@@ -782,7 +781,7 @@
             });
 
             force.nodes(d3.values(nodes));
-
+            // Adding text to nodes
             remText = svg.selectAll("text").remove();
             text = svg
                 .append("g")
@@ -804,11 +803,11 @@
                     }
                 });
 
-            // text.attr("transform", transform);
             force.start();
         }
 
         let errorNumber = 0;
+        // Function to update stats
         function callfunction() {
             let errorBody = document.getElementById("errorBody");
             let errortr = document.createElement("tr");
@@ -825,13 +824,13 @@
         }
 
         array_of_error_details = [];
+        // Function to fetch error details from server
         function callgetErrorDetails() {
             jQuery.ajax({
                 url: "/getErrorDetails",
                 success: function (result) {
                     if (result == "1") {
                     } else {
-                        // var resultLength = JSON.stringify(result).length;
 
                         let ok = false;
                         if (array_of_error_details.length < result.length) {
@@ -841,7 +840,6 @@
                             );
                             ok = true;
                         }
-                        //console.log("Array of error details: ",array_of_error_details);
                         array_of_error_details = result;
                         if (ok != false) {
                             console.log("Function calling");
@@ -858,6 +856,7 @@
         let trError;
 
         let firstTime = false;
+        // Fetching continuous data
         function callGetData() {
             jQuery.ajax({
                 url: "/getdata",
@@ -906,10 +905,9 @@
                                     // console.log(countElement," @@@@ count element")
                                     countElement.innerHTML = arr[0].userClicks;
 
-                                    // colorElement = td.getElementsByClassName("box")[0]
-                                    // colorElement.setAttribute("style","background-color:"+arr[arr.length-1].color);
                                 }
                             }
+                            // Adding stats elements 
                             if (!check) {
                                 let tr = document.createElement("tr");
                                 let tdColor = document.createElement("td");
@@ -987,6 +985,7 @@
                             }
 
                             if (!check) {
+                                // Adding stats and bugs elements
                                 let tr = document.createElement("tr");
                                 let tdColor = document.createElement("td");
                                 let tdName = document.createElement("td");
@@ -1034,7 +1033,7 @@
                                     "class",
                                     "bugs" + arr[arr.length - 1].id
                                 );
-
+                                // Finding the user from list and adding to stats
                                 if (userPresent == false) {
                                     userBody.appendChild(tr);
                                     trError
@@ -1115,15 +1114,11 @@
                             }
                         }
 
-                        //findAndUpdate(arr);
-                        //to here
                     }
-                    // callGetData();
                 },
                 error: function (xhr, status) {
                     //   callGetData()
                 },
-                //        async: false
             });
         }
         setInterval(function () {
@@ -1133,9 +1128,8 @@
             callgetErrorDetails();
         }, 500);
 
-        // currentUser = showLoginAlert();
         updateCode(cc);
-
+        // Function to show node when explored
         function showOne(nodeId, source, target) {
             if (target != "------") {
                 //update link:
@@ -1157,7 +1151,7 @@
                 count = count + 1;
             });
         }
-
+        // Function to show node based on id
         function showNode(id) {
             var elems = document.querySelectorAll("[id='" + id + "']");
             count = 0;
@@ -1168,6 +1162,7 @@
 
             // console.log("Node and item count:", count);
         }
+        // Function to highlight link when explored
         function showLink(source, target, action) {
             try {
                 let elem = document.getElementById(source + "::" + target);
@@ -1180,6 +1175,7 @@
                 let random = Math.floor(Math.random() * ss.length);
                 let tempSource;
                 let tempTarget;
+                // Finding data of edge to be added from source
                 for (let i = 0; i < links.length; i++) {
                     if (links[i].source.name == source) {
                         tempSource = links[i].source;
@@ -1189,6 +1185,7 @@
                         break;
                     }
                 }
+                // Finding data of edge to be added from source
                 for (let i = 0; i < links.length; i++) {
                     if (links[i].source.name == target) {
                         tempTarget = links[i].source;
@@ -1204,6 +1201,7 @@
                 if (!tempTarget) {
                     tempTarget = nodes[target];
                 }
+                // Preparing links
                 if (tempSource && tempTarget) {
                     links.push({
                         source: tempSource,
@@ -1220,7 +1218,7 @@
                     ({ stCombo }, index) => !ids1.includes(stCombo, index + 1)
                 );
                 links = filtered1;
-
+                // Updating the added edge to graph
                 newUpdateCode();
 
                 let elem = document.getElementById(source + "::" + target);
@@ -1232,8 +1230,7 @@
             }
         }
 
-        //this is the one to use:
-
+        // Function to hide link using id
         function hideLink2(id) {
             // console.log(id)
             let elem = document.getElementById(id);
@@ -1242,7 +1239,7 @@
             // console.log(elem)
             elem.setAttribute("style", "display:none");
         }
-
+        // Function to hide All nnodes and edges
         function hideAll() {
             linkCounter = 0;
             hiddenAll = true;
@@ -1270,7 +1267,7 @@
 
             hideButton.setAttribute("onClick", "javascript: showAll();");
         }
-
+        // Function to switch to display all nodes and edges
         function showAll() {
             hiddenAll = false;
             links.forEach((link) => {
@@ -1303,11 +1300,11 @@
 
             return ret;
         }
-
+        // Function to open nav menu
         function openNav() {
             document.getElementById("myNav").style.width = "100%";
         }
-
+        // Function to close nav menu
         function closeNav() {
             document.getElementById("myNav").style.width = "0%";
         }
@@ -1333,6 +1330,7 @@
                 return x;
             }
         }
+        // Function to find the interpolation
         function interpolateLinearly(x, values) {
             // Split values into four lists
             var x_values = [];
