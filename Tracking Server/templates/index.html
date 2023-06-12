@@ -89,15 +89,17 @@
 <script>
 console.log("Called");
 
+	// Function to open navbar menu
 function openNav() {
   document.getElementById("myNav").style.width = "100%";
 }
-
+	// Function to close navbar menu
 function closeNav() {
   document.getElementById("myNav").style.width = "0%";
 }
 
 //--------------------------------------------------------------------------------------------------
+	// Function to enforce Bounds
  function enforceBounds(x) {
             if (x < 0) {
                 return 0;
@@ -107,6 +109,7 @@ function closeNav() {
                 return x;
             }
         }
+	// Function to find the interpolation
 function interpolateLinearly(x, values) {
 
             // Split values into four lists
