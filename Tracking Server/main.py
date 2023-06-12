@@ -28,7 +28,7 @@ df = pd.read_excel('Book1.xlsx')
 
 def defaultcolor():
     return 'FFFFFF'
-
+# Creating pattern rows
 patternRows = []
 for row in range(df.shape[0]):
     newRow = ""
@@ -39,13 +39,13 @@ for row in range(df.shape[0]):
     patternRows.append(newRow)
 maxCols = df.shape[1]
 
-
+# Function to apply laplace smoothing
 def laplaceSmoothing(gramsFreqDist):
     for word in gramsFreqDist.keys():
         gramsFreqDist[word] += 1
     return gramsFreqDist
 
-
+# Function to generate ngrams with demanded parameters
 def generateNgrams(totalGrams, patternRows):
 
     all_nGrams = []
@@ -79,7 +79,7 @@ def generateNgrams(totalGrams, patternRows):
         all_nGrams_distributions.append(gramsFreqDist)
     return all_nGrams, all_nGrams_distributions
 
-
+# Function to find propability distribution for ngrams
 def createProbabilityDistribution(freq_dist):
 
     all_nGramProbs = []
@@ -100,7 +100,7 @@ def createProbabilityDistribution(freq_dist):
         all_nGramProbs.append(nGramProbs)
     return all_nGramProbs
 
-
+# Convert text to ngrams
 def convert2Gram(pattern, gramVal):
     row_tokens = pattern.split(" ")
     gramTuples = ngrams(row_tokens, gramVal)
@@ -109,7 +109,7 @@ def convert2Gram(pattern, gramVal):
         lastVal = gram
     return lastVal
 
-
+# Find probability for ngrams
 def findGramProbability(tup, gramVal, all_prob_dists):
     if (gramVal-2 < len(all_prob_dists) and gramVal-2 > -1):
         gVal = gramVal-2
@@ -128,7 +128,7 @@ def findGramProbability(tup, gramVal, all_prob_dists):
 all_nGrams, all_nGrams_distributions = generateNgrams(maxCols, patternRows)
 all_prob_dists = createProbabilityDistribution(all_nGrams_distributions)
 
-
+# Function to calcultate probability for each input pattern
 def predictProb(test_row, probDist, cols):
     test_tokens = test_row.split(" ")
     test_len = len(test_tokens)
@@ -173,6 +173,7 @@ print(class_names)
 print(class_probs)
 
 
+# Generating and storing current user pattern
 pattern=""
 def make_pattern(testStr):
     global pattern
@@ -191,6 +192,8 @@ CORS(app)
 #tag = ""
 #html = ""
 #state = ""
+
+# Login route to add users
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
@@ -206,7 +209,7 @@ def login():
             classes=classNames,
             probs=classProbs
         )
-
+# Responding requests with predictions
 @app.route('/predictiondata', methods=['POST', 'GET'])
 def data():
     if request.method == 'POST':
@@ -230,7 +233,7 @@ colors = defaultdict(defaultcolor)
 IP = socket.gethostbyname(socket.getfqdn())
 #IP = "0.0.0.0"
 regex = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
-
+# Get Actions from users or client side
 def get_Action(x,attr):
     s = x + "!@!"
     if x == 'input':
@@ -267,7 +270,7 @@ def get_Action(x,attr):
         s += 'nan'  # href
     return s
 
-
+# Applying the reverse enginner action
 def reverseEngineerAction(action):
     tag, name, value, href = action.split('!@!')
     xpath = '//' + tag + '['
@@ -305,7 +308,7 @@ def reverseEngineerAction(action):
         pathlist.append(XPATH)
     return pathlist
 users = []
-
+# Receiving data from client side and generating data for states
 @app.route('/data',methods=["GET","POST"])
 def dataReciever():
     #global tag, html, state
@@ -336,7 +339,7 @@ def dataReciever():
     interactions.append({"id":id,"action":actions,"state":md5(state),"color":colors[id],"clicks":click_count})
 
     return "ok"
-
+# Sending all the user interactions data
 @app.route('/getdata',methods=["GET","POST"])
 def dataSender():
 
@@ -372,6 +375,7 @@ def dataSender():
 @app.route('/test',methods=["GET","POST"])
 def hello_name():
    return "what"
+# Resolving missing edges and nodes
 @app.route('/missing',methods=["GET","POST"])
 def missing_resolver():
     req_data = request.get_json()
@@ -404,6 +408,7 @@ def missing_resolver():
     with open("static/js/temp_new.js","w") as f_wr:
         f_wr.write("let data = "+json.dumps(L))
     return "added missing source:{0}, Target:{1}, Action:{2}".format(source,target,action)
+# Display simple node by rendering the index file
 @app.route('/',methods=["GET","POST"])
 def show_graph():
     """
@@ -421,7 +426,7 @@ def show_graph():
         file.write(s)
     """
     return render_template("index.html")
-
+# Sending the crawler data of graph
 @app.route('/graph')
 def send():
     #return "<a href={0}>file</a>".format("{{ url_for('static', filename='js/grapash.json') }}")
@@ -434,6 +439,8 @@ def send():
 #     #return "<a href={0}>file</a>".format("{{ url_for('static', filename='js/grapash.json') }}")
 #     file = open("static/js/data.json")
 #     return file.read()
+
+# Display interactive graph by rendering the direct file
 @app.route('/d3',methods=["GET","POST"])
 def show_graphd3():
     """
@@ -454,6 +461,7 @@ def show_graphd3():
     print(file.read())
     return render_template("direct.html")
 
+# Get the first image from the files
 @app.route('/get_image')
 def get_image():
     filename = request.args.get('name')
@@ -461,6 +469,8 @@ def get_image():
         encoded_string = base64.b64encode(image_file.read())
     #return send_file("./data/Q_Result/"+filename, mimetype='image/png')
     return jsonify({"data":encoded_string.decode("utf-8")})
+
+# Get the second image from the files
 @app.route('/get_image2')
 def get_image2():
     filename = request.args.get('name')
@@ -468,6 +478,8 @@ def get_image2():
         encoded_string = base64.b64encode(image_file.read())
     #return send_file("./data/Q_Result/"+filename, mimetype='image/png')
     return encoded_string.decode("utf-8")
+
+# Get the source code from the files
 @app.route('/get_File')
 def get_file():
     filename = request.args.get('name')
@@ -479,6 +491,7 @@ def get_file():
 
 arrayOfErrorDetails=[]  #For saving Error Description.
 arrayOfErrors=[]    #For saving interactions.
+# generating the list of errors detected
 @app.route('/error',methods=["GET","POST"])
 def caughtError():
     data = request.get_json()
@@ -502,7 +515,7 @@ def caughtError():
     # do something with the title and desc values
     return jsonify({'status': 'success'})
 
-
+# Get the interactions of all the actions performed
 @app.route('/getInteraction',methods=["GET","POST"])
 def getinteraction():
     if len(interactions) == 0:
@@ -510,20 +523,20 @@ def getinteraction():
     else:
         print(arrayOfErrors)
         return jsonify(arrayOfErrors)
-
+# Get detected errors details
 @app.route('/getErrorDetails',methods=["GET","POST"])
 def getErrorDetails():
     if len(arrayOfErrorDetails) == 0:
         return "1"
     else:
         return jsonify(arrayOfErrorDetails)
-
+# Find and send the current state URL
 @app.route('/getURL',methods=["GET","POST"])
 def URLgetter():
     global current_URL
     current_URL = request.json.get("pageURL")
     return "URL received"
-
+# Generating the image and html for newly explored node
 def imageAndHtml(url,fileName='screenshot.html',output_dir='./data/Q_Result'):
 
     driver = webdriver.Firefox()
@@ -540,7 +553,7 @@ def imageAndHtml(url,fileName='screenshot.html',output_dir='./data/Q_Result'):
 
     driver.quit()
     return "yes"
-
+# Check whether the files exist or not
 @app.route('/createImgHtml',methods=["GET","POST"])
 def createImageHtml():
     newFilename = request.args.get("stateName")
